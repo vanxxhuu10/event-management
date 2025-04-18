@@ -1847,12 +1847,12 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentData = [];
 
     function loadUsersTable() {
-      fetch("https://event-management-divk.onrender.com/get-users")
+      fetch("/get-users")
         .then(response => response.json())
         .then(data => {
-          currentData = data;
+          currentData = data; // ✅ Fixed this line
           document.getElementById("tableTitle").innerText = "Users Table";
-          renderEditableUsersTable(data);
+          renderEditableUsersTable(currentData);
         });
     }
 
@@ -1867,7 +1867,7 @@ document.addEventListener("DOMContentLoaded", function () {
       // Create table headers (even if no data is available)
       const headers = data.length > 0 ? Object.keys(data[0]) : [
         "id", "club_name", "club_email", "password"
-      ]; // Default headers if no data
+      ];
 
       const thead = table.createTHead();
       const headerRow = thead.insertRow();
@@ -1888,24 +1888,22 @@ document.addEventListener("DOMContentLoaded", function () {
         const tr = tbody.insertRow();
         headers.forEach(() => {
           const cell = tr.insertCell();
-          cell.innerText = "No data available"; // Placeholder when no data
+          cell.innerText = "No data available";
         });
       } else {
         data.forEach((row, index) => {
           const tr = tbody.insertRow();
           headers.forEach(key => {
             const cell = tr.insertCell();
-            if (key === "id") {
-              cell.innerText = row[key]; // Read-only
-            } else {
-              const input = document.createElement("input");
-              input.type = "text";
-              input.value = row[key];
-              input.dataset.key = key;
-              input.dataset.index = index;
-              input.onchange = updateUserValue;
-              cell.appendChild(input);
-            }
+            const input = document.createElement("input");
+            input.type = "text";
+            input.value = row[key];
+            input.dataset.key = key;
+            input.dataset.index = index;
+            input.onchange = updateUserValue;
+
+            // Allow editing "id" since it's not the DB ID
+            cell.appendChild(input);
           });
 
           const actionCell = tr.insertCell();
@@ -1918,14 +1916,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
       container.appendChild(table);
 
-      // Add Row button will always be visible
       const addBtn = document.createElement("button");
       addBtn.innerText = "Add Row";
       addBtn.onclick = addUserRow;
       addBtn.style.marginTop = "20px";
       container.appendChild(addBtn);
 
-      // Submit button will always be visible
       const submitBtn = document.createElement("button");
       submitBtn.innerText = "Submit";
       submitBtn.style.marginTop = "20px";
@@ -1946,7 +1942,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function addUserRow() {
       const newRow = {
-        id: "Auto", // Placeholder for id
+        id: "", // ✅ Editable ID
         club_name: "",
         club_email: "",
         password: ""
@@ -1956,7 +1952,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function submitUserData() {
-      fetch("https://event-management-divk.onrender.com/update-users", {
+      fetch("/update-users", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -1966,7 +1962,10 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(res => res.json())
         .then(result => {
           alert(result.message || "Users data updated!");
-          loadUsersTable(); // Reload the table
+          loadUsersTable(); // Reload after submission
+        })
+        .catch(err => {
+          alert("Error updating users: " + err);
         });
     }
 
