@@ -1888,27 +1888,28 @@ document.addEventListener("DOMContentLoaded", function () {
           cell.innerText = "No data available";
         }
       } else {
-        for (let index = 0; index < data.length; index++) {
-          const row = data[index];
+        data.forEach((row, index) => {
           const tr = tbody.insertRow();
-          for (let j = 0; j < headers.length; j++) {
-            const key = headers[j];
+          headers.forEach((key) => {
             const cell = tr.insertCell();
             const input = document.createElement("input");
             input.type = "text";
             input.value = row[key];
-            input.dataset.key = key;
-            input.dataset.index = index;
-            input.onchange = updateUserValue;
+
+            // Update directly without dataset
+            input.addEventListener("input", (e) => {
+              currentData[index][key] = e.target.value;
+            });
+
             cell.appendChild(input);
-          }
+          });
 
           const actionCell = tr.insertCell();
           const deleteBtn = document.createElement("button");
           deleteBtn.innerText = "Delete";
           deleteBtn.onclick = () => deleteUserRow(index);
           actionCell.appendChild(deleteBtn);
-        }
+        });
       }
 
       container.appendChild(table);
@@ -1924,12 +1925,6 @@ document.addEventListener("DOMContentLoaded", function () {
       submitBtn.style.marginTop = "20px";
       submitBtn.onclick = submitUserData;
       container.appendChild(submitBtn);
-    }
-
-    function updateUserValue(e) {
-      const index = e.target.dataset.index;
-      const key = e.target.dataset.key;
-      currentData[index][key] = e.target.value;
     }
 
     function deleteUserRow(index) {
@@ -1969,6 +1964,7 @@ document.addEventListener("DOMContentLoaded", function () {
     loadUsersTable();
   });
 });
+
 
 
 
