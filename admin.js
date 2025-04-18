@@ -358,32 +358,22 @@ document.addEventListener("DOMContentLoaded", function () {
     table.border = "1";
     table.style.width = "100%";
 
-    if (data.length === 0) {
-      // Add table headers even when there's no data
-      const headerRow = table.insertRow();
-      const headers = ["id", "date", "venue_pending", "reason"]; // You can manually define the headers
-      headers.forEach(header => {
-        const th = document.createElement("th");
-        th.innerText = header;
-        headerRow.appendChild(th);
-      });
+    const thead = table.createTHead();
+const headerRow = thead.insertRow();
 
-      // Add empty message to table container
-      venueTableContainer.innerHTML = "<p>No data available. You can add the first row.</p>";
-    } else {
-      // Create table header for non-empty data
-      const headerRow = table.insertRow();
-      const headers = Object.keys(data[0]);
-      headers.forEach(header => {
-        const th = document.createElement("th");
-        th.innerText = header;
-        headerRow.appendChild(th);
-      });
-    }
+// Use headers based on data or default
+const headers = data.length > 0 ? Object.keys(data[0]) : ["id", "date", "venue_pending", "reason"];
 
-    const actionTh = document.createElement("th");
-    actionTh.innerText = "Actions";
-    table.querySelector("thead").appendChild(actionTh); // Append action column header
+headers.forEach(header => {
+  const th = document.createElement("th");
+  th.innerText = header;
+  headerRow.appendChild(th);
+});
+
+// Add "Actions" column
+const actionTh = document.createElement("th");
+actionTh.innerText = "Actions";
+headerRow.appendChild(actionTh);
 
     // Create table body with editable inputs
     const tbody = table.createTBody();
