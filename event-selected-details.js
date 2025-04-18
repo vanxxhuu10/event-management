@@ -52,7 +52,7 @@ function showSection(section) {
   const { club, event } = getQueryParams(); // Extract club and event
 
   if (section === 'requirements') {
-    fetch(`/api/requirements/${club}?event=${encodeURIComponent(event)}`)
+    fetch(`https://event-management-divk.onrender.com/api/requirements/${club}?event=${encodeURIComponent(event)}`)
       .then(response => response.json())
       .then(data => {
         content.innerHTML = `
@@ -75,7 +75,7 @@ function showSection(section) {
       });
   } else if (section === 'posters') {
     // Fetch posters for the event
-    fetch(`/api/posters/${club}?event=${encodeURIComponent(event)}`)
+    fetch(`https://event-management-divk.onrender.com/api/posters/${club}?event=${encodeURIComponent(event)}`)
       .then(response => response.json())
       .then(data => {
         if (data.error) {
@@ -93,7 +93,7 @@ function showSection(section) {
         content.innerHTML = `<p style="color:red;">Error loading posters: ${err.message}</p>`;
       });
   } else if (section === 'sponsors') {
-    fetch(`/api/sponsors/${club}?event=${encodeURIComponent(event)}`)
+    fetch(`https://event-management-divk.onrender.com/api/sponsors/${club}?event=${encodeURIComponent(event)}`)
       .then(response => response.json())
       .then(data => {
         content.innerHTML = `
@@ -105,7 +105,7 @@ function showSection(section) {
         content.innerHTML = `<p style="color:red;">Error loading data: ${err.message}</p>`;
       });
   } else if (section === 'purchase-list') {
-    fetch(`/api/purchase/${club}?event=${encodeURIComponent(event)}`)
+    fetch(`https://event-management-divk.onrender.com/api/purchase/${club}?event=${encodeURIComponent(event)}`)
       .then(response => response.json())
       .then(data => {
         content.innerHTML = `
