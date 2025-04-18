@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    fetch("https://event-management-divk.onrender.com/api/final-clubs")
+    fetch("/api/final-clubs")
       .then(res => res.json())
       .then(data => {
         const container = document.getElementById("clubButtons");
@@ -100,6 +100,33 @@ document.addEventListener("DOMContentLoaded", () => {
   
         tableHTML += `</tbody></table>`;
         tableContainer.innerHTML = tableHTML;
+        document.querySelectorAll(".sendBtn").forEach((btn) => {
+          btn.addEventListener("click", (e) => {
+            const row = e.target.closest("tr");
+            const email = row.children[15].textContent.trim(); // Club Email
+            const subject = encodeURIComponent("Event Approval Notification");
+            const body = encodeURIComponent(`
+        Hello,
+        
+        Your event "${row.children[0].textContent.trim()}" has been reviewed.
+        
+        Details:
+        - Venue Allotted: ${row.querySelector("input[name='venueAllotted']").value}
+        - Time: ${row.querySelector("input[name='timeFromAllotted']").value} to ${row.querySelector("input[name='timeToAllotted']").value}
+        - Date: ${row.querySelector("input[name='dateAllotted']").value}
+        
+        Comments:
+        ${row.querySelector("textarea[name='Comments']").value}
+        
+        Best regards,
+        Event Approval Committee
+            `);
+        
+            // Redirect to Gmail with prefilled values
+            const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${email}&su=${subject}&body=${body}`;
+            window.open(gmailUrl, "_blank"); // Open in a new tab
+          });
+        });
       })
       .catch(err => {
         console.error("Error fetching events:", err);
@@ -130,7 +157,7 @@ document.addEventListener("DOMContentLoaded", () => {
       comments: row.querySelector("textarea[name='Comments']").value
     };
   
-    fetch("https://event-management-divk.onrender.com/api/submit-final-event", {
+    fetch("/api/submit-final-event", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data)
@@ -144,17 +171,5 @@ document.addEventListener("DOMContentLoaded", () => {
         alert("Failed to submit!");
       });
   }
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
   
   
