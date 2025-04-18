@@ -20,7 +20,7 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
     }
 
     try {
-        const response = await fetch('/signup', {
+        const response = await fetch('https://event-management-divk.onrender.com/signup', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
