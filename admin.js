@@ -1850,7 +1850,7 @@ document.addEventListener("DOMContentLoaded", function () {
       fetch("/get-users")
         .then(response => response.json())
         .then(data => {
-          currentData = data; // ✅ Fixed this line
+          currentData = data;
           document.getElementById("tableTitle").innerText = "Users Table";
           renderEditableUsersTable(currentData);
         });
@@ -1858,25 +1858,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function renderEditableUsersTable(data) {
       const container = document.getElementById("venueTableContainer");
-      container.innerHTML = ""; // Clear previous content
+      container.innerHTML = "";
 
       const table = document.createElement("table");
       table.border = "1";
       table.style.width = "100%";
 
-      // Create table headers (even if no data is available)
-      const headers = data.length > 0 ? Object.keys(data[0]) : [
-        "id", "club_name", "club_email", "password"
-      ];
+      const headers = data.length > 0 ? Object.keys(data[0]) : ["id", "club_name", "club_email", "password"];
 
       const thead = table.createTHead();
       const headerRow = thead.insertRow();
 
-      headers.forEach(header => {
+      for (let i = 0; i < headers.length; i++) {
         const th = document.createElement("th");
-        th.innerText = header;
+        th.innerText = headers[i];
         headerRow.appendChild(th);
-      });
+      }
 
       const actionTh = document.createElement("th");
       actionTh.innerText = "Actions";
@@ -1886,14 +1883,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (data.length === 0) {
         const tr = tbody.insertRow();
-        headers.forEach(() => {
+        for (let i = 0; i < headers.length; i++) {
           const cell = tr.insertCell();
           cell.innerText = "No data available";
-        });
+        }
       } else {
-        data.forEach((row, index) => {
+        for (let index = 0; index < data.length; index++) {
+          const row = data[index];
           const tr = tbody.insertRow();
-          headers.forEach(key => {
+          for (let j = 0; j < headers.length; j++) {
+            const key = headers[j];
             const cell = tr.insertCell();
             const input = document.createElement("input");
             input.type = "text";
@@ -1901,17 +1900,15 @@ document.addEventListener("DOMContentLoaded", function () {
             input.dataset.key = key;
             input.dataset.index = index;
             input.onchange = updateUserValue;
-
-            // Allow editing "id" since it's not the DB ID
             cell.appendChild(input);
-          });
+          }
 
           const actionCell = tr.insertCell();
           const deleteBtn = document.createElement("button");
           deleteBtn.innerText = "Delete";
           deleteBtn.onclick = () => deleteUserRow(index);
           actionCell.appendChild(deleteBtn);
-        });
+        }
       }
 
       container.appendChild(table);
@@ -1942,7 +1939,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function addUserRow() {
       const newRow = {
-        id: "", // ✅ Editable ID
+        id: "",
         club_name: "",
         club_email: "",
         password: ""
@@ -1962,15 +1959,16 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(res => res.json())
         .then(result => {
           alert(result.message || "Users data updated!");
-          loadUsersTable(); // Reload after submission
+          loadUsersTable();
         })
         .catch(err => {
           alert("Error updating users: " + err);
         });
     }
 
-    loadUsersTable(); // Initial call when button is clicked
+    loadUsersTable();
   });
 });
+
 
 
