@@ -1493,17 +1493,16 @@ app.get("/get-users", (req, res) => {
     db.all("SELECT * FROM users", (err, rows) => {
       if (err) {
         console.error("Failed to fetch users:", err.message);
-        return res.status(500).json({ error: err.message });
+        return res.status(500).json({ error: "Failed to fetch users." });
       } else {
-        // Ensure that the data is sent as JSON
-        res.json(rows);  // Sending the rows as JSON
+        res.json(rows); // Send the users as a JSON response
       }
       db.close();
     });
   });
 });
 
-// POST: Update all users
+// Route to update users in the database
 app.post("/update-users", (req, res) => {
   const db = new sqlite3.Database(path.join(__dirname, "database", "users.db"), (err) => {
     if (err) {
@@ -1512,10 +1511,10 @@ app.post("/update-users", (req, res) => {
     }
   });
 
-  const users = req.body.users; // Note: using 'users' key here to match the frontend format
+  const users = req.body.users; // Expecting the "users" array in the request body
 
   if (!Array.isArray(users)) {
-    return res.status(400).json({ error: "Invalid format: expected an array under 'users'." });
+    return res.status(400).json({ error: "Invalid format: expected an array of users." });
   }
 
   db.serialize(() => {
@@ -1539,7 +1538,7 @@ app.post("/update-users", (req, res) => {
           return res.status(500).json({ error: "Finalizing insert failed." });
         }
 
-        res.json({ message: "Users table updated successfully." }); // Send success as JSON
+        res.json({ message: "Users table updated successfully." });
         db.close();
       });
     });
