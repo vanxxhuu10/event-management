@@ -1850,6 +1850,8 @@ document.addEventListener("DOMContentLoaded", function () {
       fetch("/get-users")
         .then(response => response.json())
         .then(data => {
+          console.log("Data received from server:", data); // Log the response
+
           // Check if the data is an array
           if (Array.isArray(data)) {
             currentData = data;
@@ -1857,7 +1859,7 @@ document.addEventListener("DOMContentLoaded", function () {
             renderEditableUsersTable(currentData);
           } else {
             console.error("Data received is not an array:", data);
-            alert("Error: Data received is not in the expected format.");
+            alert("Error: Data is not in the expected format.");
           }
         })
         .catch(err => {
@@ -1979,6 +1981,7 @@ document.addEventListener("DOMContentLoaded", function () {
     loadUsersTable();
   });
 });
+
 
 
 
