@@ -1847,24 +1847,15 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentData = [];
 
     function loadUsersTable() {
-      fetch("/get-users")
-        .then(response => response.json())  // Ensure response is parsed as JSON
+      fetch("https://your-backend-url.onrender.com/get-users") // Replace with your actual Render backend URL
+        .then(response => response.json())
         .then(data => {
-          console.log("Data received from server:", data); // Log the response
-
-          // Check if the data is an array
-          if (Array.isArray(data)) {
-            currentData = data;
-            document.getElementById("tableTitle").innerText = "Users Table";
-            renderEditableUsersTable(currentData);
-          } else {
-            console.error("Data received is not an array:", data);
-            alert("Error: Data is not in the expected format.");
-          }
+          currentData = data;
+          document.getElementById("tableTitle").innerText = "Users Table";
+          renderEditableUsersTable(currentData);
         })
         .catch(err => {
           console.error("Error fetching users:", err);
-          alert("Error loading users data.");
         });
     }
 
@@ -1900,27 +1891,25 @@ document.addEventListener("DOMContentLoaded", function () {
           cell.innerText = "No data available";
         }
       } else {
-        for (let index = 0; index < data.length; index++) {
-          const row = data[index];
+        data.forEach((row, index) => {
           const tr = tbody.insertRow();
-          for (let j = 0; j < headers.length; j++) {
-            const key = headers[j];
+          headers.forEach((header) => {
             const cell = tr.insertCell();
             const input = document.createElement("input");
             input.type = "text";
-            input.value = row[key];
-            input.dataset.key = key;
+            input.value = row[header];
+            input.dataset.key = header;
             input.dataset.index = index;
             input.onchange = updateUserValue;
             cell.appendChild(input);
-          }
+          });
 
           const actionCell = tr.insertCell();
           const deleteBtn = document.createElement("button");
           deleteBtn.innerText = "Delete";
           deleteBtn.onclick = () => deleteUserRow(index);
           actionCell.appendChild(deleteBtn);
-        }
+        });
       }
 
       container.appendChild(table);
@@ -1961,14 +1950,15 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function submitUserData() {
-      fetch("/update-users", {
+      fetch("https://your-backend-url.onrender.com/update-users", {  // Replace with your actual Render backend URL
         method: "POST",
         headers: {
-          "Content-Type": "application/json"  // Ensures data is sent as JSON
+          "Content-Type": "application/json",
+          "Accept": "application/json"
         },
-        body: JSON.stringify({ users: currentData })  // Send currentData as JSON
+        body: JSON.stringify({ users: currentData })
       })
-        .then(res => res.json())  // Ensure response is parsed as JSON
+        .then(res => res.json())
         .then(result => {
           alert(result.message || "Users data updated!");
           loadUsersTable();
