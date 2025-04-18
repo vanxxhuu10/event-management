@@ -1520,7 +1520,7 @@ app.post("/update-users", (req, res) => {
     db.serialize(() => {
       db.run("BEGIN TRANSACTION");
 
-      // Clear existing data
+      // Clear existing data (optional - you might want to keep existing IDs)
       db.run("DELETE FROM users", (err) => {
         if (err) {
           db.run("ROLLBACK");
@@ -1530,9 +1530,14 @@ app.post("/update-users", (req, res) => {
 
         const stmt = db.prepare("INSERT INTO users (club_name, club_email, password) VALUES (?, ?, ?)");
         
-        // Insert new data
+        // Insert new data - let SQLite handle auto-incrementing IDs
         users.forEach((user) => {
-          stmt.run([user.club_name, user.club_email, user.password], (err) => {
+          // Only include fields that should be in the database
+          stmt.run([
+            user.club_name,
+            user.club_email,
+            user.password
+          ], (err) => {
             if (err) console.error("Failed to insert user:", err.message);
           });
         });
