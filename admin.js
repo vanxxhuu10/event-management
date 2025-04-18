@@ -1607,20 +1607,18 @@ document.addEventListener("DOMContentLoaded", function () {
       data.forEach((row, index) => {
         const tr = tbody.insertRow();
         headers.forEach(key => {
-          const cell = tr.insertCell();
-          const input = document.createElement("input");
-          input.type = "text";
-          input.value = row[key];
-          input.dataset.key = key;
-          input.dataset.index = index;
-          input.onchange = updateOrganizerValue;
+    const cell = tr.insertCell();
+    const input = document.createElement("input");
+    input.type = "text";
+    input.value = row[key];
+    input.dataset.key = key;
+    input.dataset.index = index;
+    input.onchange = updateOrganizerValue;
 
-          if (key === "id") {
-            input.readOnly = true; // Keep primary key locked
-          }
+  // Removed: if (key === "id") { input.readOnly = true; }
 
-          cell.appendChild(input);
-        });
+    cell.appendChild(input);
+  });
 
         const actionCell = tr.insertCell();
         const deleteBtn = document.createElement("button");
