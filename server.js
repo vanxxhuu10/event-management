@@ -1491,60 +1491,71 @@ app.get("/get-users", (req, res) => {
     }
 
     db.all("SELECT * FROM users", (err, rows) => {
+      db.close(); // Close the connection immediately after query
+
       if (err) {
         console.error("Failed to fetch users:", err.message);
         return res.status(500).json({ error: "Failed to fetch users." });
-      } else {
-        res.json(rows); // Send the users as a JSON response
       }
-      db.close();
+      
+      // Ensure we always return an array, even if empty
+      res.json(rows || []);
     });
   });
 });
 
-// Route to update users in the database
 app.post("/update-users", (req, res) => {
-  const db = new sqlite3.Database(path.join(__dirname, "database", "users.db"), (err) => {
-    if (err) {
-      console.error("Failed to connect to users.db:", err.message);
-      return res.status(500).json({ error: "Database connection failed." });
-    }
-  });
-
-  const users = req.body.users; // Expecting the "users" array in the request body
+  const users = req.body.users;
 
   if (!Array.isArray(users)) {
     return res.status(400).json({ error: "Invalid format: expected an array of users." });
   }
 
-  db.serialize(() => {
-    db.run("DELETE FROM users", (err) => {
-      if (err) {
-        console.error("Failed to clear users table:", err.message);
-        return res.status(500).json({ error: "Could not clear existing users." });
-      }
+  const db = new sqlite3.Database(path.join(__dirname, "database", "users.db"), (err) => {
+    if (err) {
+      console.error("Failed to connect to users.db:", err.message);
+      return res.status(500).json({ error: "Database connection failed." });
+    }
 
-      const stmt = db.prepare(`INSERT INTO users (club_name, club_email, password) VALUES (?, ?, ?)`);
+    db.serialize(() => {
+      db.run("BEGIN TRANSACTION");
 
-      users.forEach((user) => {
-        stmt.run([user.club_name, user.club_email, user.password], (err) => {
-          if (err) console.error("Failed to insert user:", err.message);
-        });
-      });
-
-      stmt.finalize((err) => {
+      // Clear existing data
+      db.run("DELETE FROM users", (err) => {
         if (err) {
-          console.error("Finalization error:", err.message);
-          return res.status(500).json({ error: "Finalizing insert failed." });
+          db.run("ROLLBACK");
+          db.close();
+          return res.status(500).json({ error: "Could not clear existing users." });
         }
 
-        res.json({ message: "Users table updated successfully." });
-        db.close();
+        const stmt = db.prepare("INSERT INTO users (club_name, club_email, password) VALUES (?, ?, ?)");
+        
+        // Insert new data
+        users.forEach((user) => {
+          stmt.run([user.club_name, user.club_email, user.password], (err) => {
+            if (err) console.error("Failed to insert user:", err.message);
+          });
+        });
+
+        stmt.finalize((err) => {
+          if (err) {
+            db.run("ROLLBACK");
+            db.close();
+            return res.status(500).json({ error: "Finalizing insert failed." });
+          }
+
+          db.run("COMMIT", (err) => {
+            db.close();
+            if (err) {
+              return res.status(500).json({ error: "Commit failed." });
+            }
+            res.json({ message: "Users table updated successfully." });
+          });
+        });
       });
     });
   });
 });
-
 
 // POST route to update Allotted Venues data
 app.post("/update-allotted-venues", (req, res) => {
