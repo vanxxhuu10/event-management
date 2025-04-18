@@ -2,7 +2,7 @@ const fs = require('fs');
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
-const db = require('./database/db');
+const db = require('./db');
 const sqlite3 = require('sqlite3').verbose();
 
 const app = express();
