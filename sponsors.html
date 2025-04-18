@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sponsor Tracker</title>
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="sponsors.css">
+  
+
+</head>
+<body>
+  <div class="container">
+    <h2>Sponsors Entry</h2>
+
+    <div class="input-group">
+      <input type="text" id="event-name" placeholder="Event Name" required>
+      <input type="date" id="event-date" required>
+    </div>
+
+    <div class="input-group">
+      <input type="text" id="sponsor-name" placeholder="Sponsor Name" required>
+      <input type="number" id="sponsor-amount" placeholder="Target Amount" required>
+    </div>
+
+    <div class="status-buttons">
+      <button onclick="setStatus('Pending')" id="btn-pending">Pending</button>
+      <button onclick="setStatus('Ongoing')" id="btn-ongoing">Ongoing</button>
+      <button onclick="setStatus('Achieved')" id="btn-achieved">Achieved</button>
+    </div>
+
+    <button class="add-button" onclick="addSponsor()">Add</button>
+
+
+    <table id="sponsor-table">
+      <thead>
+        <tr>
+          <th>Event Name</th>
+          <th>Date</th>
+          <th>Sponsor</th>
+          <th>Amount</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Entries appear here -->
+      </tbody>
+    </table>
+
+    <button class="submit-btn" onclick="submitSponsors()">Submit</button>
+  </div>
+  
+  <script src="sponsors.js"></script>
+</body>
+</html>

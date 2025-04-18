@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <title>Purchase List</title>
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="purchase.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Purchase List</h2>
+      
+        <div class="purchase-section form-meta">
+          <div class="form-group">
+            <label for="eventDate">Present Date</label>
+            <input type="date" id="eventDate" name="eventDate" class="styled-input" required>
+          </div>
+          <div class="form-group">
+            <label for="eventName">Event Name</label>
+            <input type="text" id="eventName" name="eventName" class="styled-input" placeholder="Enter event name" required>
+          </div>
+        </div>
+      
+        <!-- Toggle Buttons -->
+        <div class="toggle-buttons">
+          <button onclick="showForm('online')">Online</button>
+          <button onclick="showForm('offline')">Offline</button>
+        </div>
+      
+        <!-- Online Form -->
+        <div id="online-form" style="display: none;">
+          <div class="input-group">
+            <input type="text" id="online-item" placeholder="Item Name">
+            <input type="number" id="online-quantity" placeholder="Quantity" oninput="updateAmount('online')">
+          </div>
+          <div class="input-group">
+            <input type="number" id="online-price" placeholder="Online Price" oninput="updateAmount('online')">
+            <input type="text" id="online-link" placeholder="Amazon/Flipkart Link">
+            <input type="number" id="online-amount" placeholder="Amount" readonly>
+          </div>
+          <button onclick="addItem('online')">Add</button>
+      
+          <table id="online-table">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Link</th>
+                <th>Amount</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      
+        <!-- Offline Form -->
+        <div id="offline-form" style="display: none;">
+          <div class="input-group">
+            <input type="text" id="offline-item" placeholder="Item Name">
+            <input type="number" id="offline-quantity" placeholder="Quantity" oninput="updateAmount('offline')">
+          </div>
+          <div class="input-group">
+            <input type="number" id="offline-price" placeholder="Market Price" oninput="updateAmount('offline')">
+            <input type="text" id="offline-link" placeholder="Market/Shop Name">
+            <input type="number" id="offline-amount" placeholder="Amount" readonly>
+          </div>
+          <button onclick="addItem('offline')">Add</button>
+      
+          <table id="offline-table">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Source</th>
+                <th>Amount</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div style="margin-top: 20px;">
+            <button onclick="submitData()">Submit</button>
+            <button onclick="generateReceipt()">Generate Receipt</button>
+          </div>
+      </div>
+      
+      
+      <script src="purchase.js"></script>
+      
+  
+</body>
+</html>

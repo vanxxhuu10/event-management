@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Club Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="login.css">
+    <!-- This may block eval -->
+    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-eval';"> -->
+
+
+</head>
+<body>
+    <div class="logo-container">
+        <img src="/pictures/emc_logo.jpg" alt="Logo 1">
+    </div>
+    <div class="login-container">
+        <h2>Club Login</h2>
+        <form id="loginForm">
+           
+            <div id="error-message" style="color: red; margin-top: 10px;"></div>
+
+            <label for="club_name">Club Name</label>
+            <input type="text" id="club_name" name="club_name" placeholder="Enter Club Name" required>
+            
+            <label for="club_email">Club Email ID</label>
+            <input type="email" id="club_email" name="club_email" placeholder="Enter Club Email" required>
+            
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="Enter Password" required>
+            
+            <button type="submit">Login</button>
+            <p class="login-link">Don't Have an Account? <a href="signup.html">Sign up</a></p>
+        </form>
+    </div>
+    <script src="/login.js"></script>
+</body>
+</html>

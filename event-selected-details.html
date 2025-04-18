@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Event Details</title>
+  <link rel="stylesheet" href="event-selected-details.css">
+</head>
+<body>
+  <div class="details-container">
+    <h1 id="eventTitle">Loading Event...</h1>
+    <h2 id="clubName">Loading Club...</h2>
+
+    <div class="button-group">
+      <button onclick="navigateTo('requirements', this)">Requirements</button>
+      <button onclick="navigateTo('purchase-list', this)">Purchase List</button>
+      <button onclick="navigateTo('posters', this)">Posters</button>
+      <button onclick="navigateTo('sponsors', this)">Sponsors</button>
+    </div>
+    <div id="detailsContent"></div>
+  </div>
+
+  <script src="event-selected-details.js"></script>
+</body>
+</html>

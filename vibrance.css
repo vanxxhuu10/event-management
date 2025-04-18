@@ -1,0 +1,194 @@
+:root {
+    --primary: #6a11cb;
+    --secondary: #fc4a1a;
+    --accent: #f7b733;
+    --dark: #2c3e50;
+    --light: #f8f9fa;
+    --text: #333;
+    --text-light: #fff;
+    --success: #28a745;
+    --warning: #ffc107;
+    --danger: #dc3545;
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ===== HEADER & RIBBON ===== */
+  .header {
+    background: linear-gradient(135deg, var(--primary), var(--dark));
+    color: var(--text-light);
+    padding: 1rem;
+    text-align: center;
+    box-shadow: var(--shadow);
+    position: relative;
+    z-index: 100;
+  }
+
+  .header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .theme-switcher {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    display: flex;
+    gap: 10px;
+  }
+
+  .theme-btn {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    border: 2px solid white;
+    cursor: pointer;
+    transition: transform 0.3s;
+  }
+
+  .theme-btn:hover {
+    transform: scale(1.2);
+  }
+
+  .theme-purple { background: linear-gradient(135deg, #6a11cb, #2575fc); }
+  .theme-orange { background: linear-gradient(135deg, #fc4a1a, #f7b733); }
+  .theme-green { background: linear-gradient(135deg, #11998e, #38ef7d); }
+  .theme-dark { background: linear-gradient(135deg, #2c3e50, #4ca1af); }
+
+  /* ===== EXCEL-LIKE TABLE ===== */
+  .table-container {
+    flex: 1;
+    margin: 1rem;
+    overflow-x: auto; /* Enables horizontal scroll */
+    overflow-y: auto; /* Optional: also allows vertical scroll */
+    background: white;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    padding: 1rem;
+  }
+
+  #vibranceTable {
+    width: 150%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    font-size: 0.9rem;
+    overflow: auto;
+  }
+
+  #vibranceTable th,
+#vibranceTable td {
+  padding: 12px;
+  border: 1px solid #e0e0e0;
+  text-align: center;
+  position: relative;
+  transition: all 0.3s ease;
+  white-space: nowrap;        /* Prevents text from wrapping */
+  overflow: hidden;           /* Hides any overflowed content */
+  text-overflow: ellipsis;    /* Adds "..." when content is too long */
+  white-space: normal;        /* Allows text to wrap */
+  overflow-wrap: break-word;  /* Breaks long words */
+  word-break: break-word;     /* Ensures long unbroken text wraps */
+  max-width: 200px;           /* Optional: sets column width */
+  padding: 12px;
+  vertical-align: top;
+}
+
+  #vibranceTable th {
+    background: var(--primary);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  #vibranceTable th:hover {
+    background: var(--dark);
+  }
+
+  #vibranceTable th i {
+    margin-left: 5px;
+    opacity: 0.7;
+  }
+
+  #vibranceTable tr:nth-child(even) {
+    background: rgba(0, 0, 0, 0.02);
+  }
+
+  #vibranceTable tr:hover {
+    background: rgba(106, 17, 203, 0.05) !important;
+    transform: scale(1.005);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  #vibranceTable td:hover {
+    background: rgba(106, 17, 203, 0.1);
+  }
+
+  /* ===== RESIZABLE COLUMNS ===== */
+  .resizer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 5px;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.1);
+    cursor: col-resize;
+  }
+
+  .resizer:hover, .resizer.active {
+    background: var(--accent);
+  }
+
+  /* ===== EDITABLE CELLS ===== */
+  td.editable {
+    position: relative;
+  }
+
+  td.editable:after {
+    content: "✎";
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  td.editable:hover:after {
+    opacity: 0.5;
+  }
+
+  /* ===== ANIMATIONS ===== */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  #vibranceTable tbody tr {
+    animation: fadeIn 0.5s ease forwards;
+  }
+
+  #vibranceTable tbody tr:nth-child(odd) {
+    animation-delay: 0.1s;
+  }
+
+  #vibranceTable tbody tr:nth-child(even) {
+    animation-delay: 0.2s;
+  }

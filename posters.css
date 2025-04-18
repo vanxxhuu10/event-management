@@ -1,0 +1,81 @@
+.sample-posters {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.sample-posters img {
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+  width: 180px;
+  height: 240px;
+  object-fit: cover;
+}
+
+.sample-posters img:hover {
+  transform: scale(1.25);
+}
+
+.btn-primary {
+  background-color: var(--primary, #007bff);
+  color: #fff;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  size: 20px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 2rem;
+}
+
+.table th, .table td {
+  padding: 0.8rem;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.table th {
+  background-color: var(--primary, #007bff);
+  color: #fff;
+}
+.poster-carousel {
+  overflow: hidden;
+  width: 100%;
+  background: #0f172a;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0);
+  padding: 10px 0;
+  margin-bottom: 2rem;
+}
+
+.carousel-track {
+  display: flex;
+  width: fit-content;
+  animation: scroll-posters 10s linear infinite;
+}
+
+.carousel-track img {
+  height: 150px;
+  width: auto;
+  margin: 0 15px;
+  border-radius: 10px;
+  transition: transform 5.0s;
+}
+
+.carousel-track img:hover {
+  transform: scale(0.5);
+}
+
+@keyframes scroll-posters {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+

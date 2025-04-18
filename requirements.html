@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Requirements</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="requirements.css">
+
+</head>
+
+<body>
+  <h2>Requirements</h2>
+
+  <div class="button-group">
+    <button class="domain-btn" onclick="toggleSection('udsSection')">UDS</button>
+    <button class="domain-btn" onclick="toggleSection('housekeepingSection')">Housekeeping</button>
+    <button class="domain-btn" onclick="toggleSection('wifiSection')">WiFi</button>
+  </div>
+
+  <div class="requirement-section form-meta">
+    <div class="form-group">
+      <label for="eventDate">Present Date</label>
+      <input type="date" id="eventDate" name="eventDate" class="styled-input" required>
+    </div>
+    <div class="form-group">
+      <label for="eventName">Event Name</label>
+      <input type="text" id="eventName" name="eventName" class="styled-input" placeholder="Enter event name" required>
+    </div>
+  </div>
+
+  <form id="requirementsForm">
+    <div class="requirement-sections-container">
+      <!-- UDS Section -->
+<div id="udsSection" class="requirement-section">
+    <h3>UDS Requirements</h3>
+    <table id="udsTable">
+      <thead>
+        <tr>
+          <th>Requirement Name</th>
+          <th>Quantity</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="udsTableBody">
+        <!-- Rows will be added here -->
+      </tbody>
+    </table>
+    <div class="input-group">
+      <input type="text" id="udsNameInput" placeholder="Requirement name">
+      <input type="text" id="udsQuantityInput" placeholder="Quantity (or NA)">
+      <button type="button" onclick="addTableItem('uds')">Add</button>
+    </div>
+  </div>
+  
+  <!-- Housekeeping Section (similar changes) -->
+  <div id="housekeepingSection" class="requirement-section">
+    <h3>Housekeeping Requirements</h3>
+    <table id="housekeepingTable">
+        <thead>
+            <tr>
+              <th>Requirement Name</th>
+              <th>Quantity</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="housekeepingTableBody">
+            <!-- Rows will be added here -->
+          </tbody>
+    </table>
+    <div class="input-group">
+      <input type="text" id="housekeepingNameInput" placeholder="Requirement name">
+      <input type="text" id="housekeepingQuantityInput" placeholder="Quantity (or NA)">
+      <button type="button" onclick="addTableItem('housekeeping')">Add</button>
+    </div>
+  </div>
+
+      <div id="wifiSection" class="requirement-section">
+        <h3>WiFi Requirements</h3>
+        <div class="input-group">
+            <input type="text" id="wifiNameInput" placeholder="Requirement name" value="WIFI" readonly>
+          <select id="wifiQuantitySelect">
+            <option value="">Select quantity range</option>
+            <option value="0-10">0-10</option>
+            <option value="10-20">10-20</option>
+            <option value="20-30">20-30</option>
+            <option value="30-40">30-40</option>
+            <option value="40-50">40-50</option>
+            <option value="50-60">50-60</option>
+            <option value="60-70">60-70</option>
+            <option value="70-80">70-80</option>
+            <option value="80-90">80-90</option>
+            <option value="90-100">90-100</option>
+            <option value="100-150">100-150</option>
+            <option value="150-200">150-200</option>
+            <option value="200-250">200-250</option>
+            <option value="300">300</option>
+          </select>
+        
+          <button type="button" id="addWifiBtn" onclick="addWifiRequirement()" style="display: none;">Add Requirement</button>
+        </div>
+        <ul id="wifiList"></ul>
+      </div>
+
+    <button type="submit" class="submit-btn">Submit Requirements</button>
+  </form>
+  <script src="requirements-background.js"></script>
+
+  <script src="requirements.js"></script>
+</body>
+
+</html>

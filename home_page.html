@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Club Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="home.css">
+    
+    
+</head>
+<body>
+    <div class="top-ribbon">
+        <div class="logo-section">
+          <img src="https://th-i.thgim.com/public/news/cities/chennai/sv74jl/article69267518.ece/alternates/FREE_1200/VIBRANCE%20LOGO%201.png" alt="Club Logo">
+          <span id="clubNameDisplay"></span> <!-- Dynamic club name will go here -->
+        </div>
+        <button id="logoutBtn" type="button">Logout</button>
+      </div>
+      
+    
+    
+    <div class="dashboard-btn" style="text-align: center;" onclick="toggleSidebar()">Dashboard</div>
+    
+    <div class="sidebar" id="sidebar">
+        <a href="#" onclick="showForm()">Event Register</a>
+        <a href="#" onclick="showVenueList()">Venue Availability</a>
+        <a href="#">Requirements</a>
+        <a href="#">Purchase List</a>
+        <a href="#">Posters</a>
+        <a href="#">Sponsors</a>
+        <a href="#">Profile</a>
+        <a href="#">Settings</a>
+    </div>
+
+    
+    <div class="sidebar">
+        <div class="sidebar-toggle" onclick="toggleSidebar()">☰</div>
+        <a href="#" onclick="showForm()"><i class="fas fa-home"></i> <span>Event Register</span></a>
+        
+        <a href="#" onclick="showVenueList()"><i class="fas fa-user"></i> <span>Venue Availability</span></a>
+        
+        <a href="requirements.html"><i class="fas fa-sign-out-alt"></i> <span>Requirements</span> </a>
+            
+        <a href="purchase.html"><i class="fas fa-sign-out-alt"></i> <span>Purchase list</span></a>
+        
+        <a href="posters.html"><i class="fas fa-sign-out-alt"></i> <span>Posters</span></a>
+        
+        <a href="sponsors.html"><i class="fas fa-sign-out-alt"></i> <span>Sponsors</span></a>
+
+        <a href="#"><i class="fas fa-sign-out-alt"></i> <span>Profile</span></a>
+        
+        <a href="#"><i class="fas fa-sign-out-alt"></i> <span>Settings</span></a>
+    </div>
+    
+    <div class="content">
+        <div class="registration-form" id="eventForm">
+            <h2>Event Registration</h2>
+            <form id="event">
+                <label for="eventName">Event Name:</label>
+<input type="text" id="eventName" name="eventName" required>
+
+<label for="clubName">Club Name:</label>
+<input type="text" id="clubName" name="clubName" required>
+
+<label for="date1">Date Preference 1:</label>
+<input type="date" id="date1" name="date1" required>
+
+<label for="date2">Date Preference 2:</label>
+<input type="date" id="date2" name="date2" required>
+
+<label for="venue1">Venue Preference 1:</label>
+<input type="text" id="venue1" name="venue1" placeholder="Please see the available Venues and select them" readonly required>
+
+<label for="venue2">Venue Preference 2:</label>
+<input type="text" id="venue2" name="venue2" placeholder="Please see the available Venues and select them" readonly required>
+
+<label for="venue3">Venue Preference 3:</label>
+<input type="text" id="venue3" name="venue3" placeholder="Please see the available Venues and select them" readonly required>
+
+<label for="timeFrom">Time From:</label>
+<input type="time" id="timeFrom" name="timeFrom" required>
+
+<label for="timeTo">Time To:</label>
+<input type="time" id="timeTo" name="timeTo" required>
+
+<label for="eventDescription">Event Description:</label>
+<textarea id="eventDescription" name="eventDescription" required></textarea>
+
+<label for="studentCoord1">Student Coordinator 1 Name:</label>
+<input type="text" id="studentCoord1" name="studentCoord1" required>
+
+<label for="phone1">Phone Number:</label>
+<input type="tel" id="phone1" name="phone1" required>
+
+<label for="studentCoord2">Student Coordinator 2 Name:</label>
+<input type="text" id="studentCoord2" name="studentCoord2">
+
+<label for="phone2">Phone Number:</label>
+<input type="tel" id="phone2" name="phone2">
+
+<label for="facultyCoord">Faculty Coordinator Name:</label>
+<input type="text" id="facultyCoord" name="facultyCoord" required>
+
+<label for="clubEmail">Club's Official Email ID:</label>
+<input type="email" id="clubEmail" name="clubEmail" required>
+
+<label for="fee">Registration Fee:</label>
+<input type="number" id="fee" name="fee" required>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+        <div class="success-message" id="successMessage"></div>
+        <!-- Venue Availability List -->
+        <div class="venue-list" id="venueList">
+            <h2>Venues Available</h2>
+            <div class="venue-item">
+                <input type="checkbox" id="venue1Choice" onclick="selectVenue(1, 'Nethaji Auditorium')">
+                <h3>Nethaji Auditorium</h3>
+                <p>Details about Venue 1...</p>
+            </div>
+            <div class="venue-item">
+                <input type="checkbox" id="venue2Choice" onclick="selectVenue(2, 'AB3 Auditorium')">
+                <h3>AB3 Auditorium</h3>
+                <p>Details about Venue 2...</p>
+            </div>
+            <div class="venue-item">
+                <input type="checkbox" id="venue3Choice" onclick="selectVenue(3, 'MG Auditorium')">
+                <h3>MG Auditorium</h3>
+                <p>Details about Venue 3...</p>
+            </div>
+            <div class="venue-item">
+                <input type="checkbox" id="venue4Choice" onclick="selectVenue(4, 'AB1 Portico')">
+                <h3>AB1 Portico</h3>
+                <p>Details about Venue 4...</p>
+            </div>
+            <div class="venue-item">
+                <input type="checkbox" id="venue5Choice" onclick="selectVenue(5, 'Classroom')">
+                <h3>Classroom</h3>
+                <p>Details about Venue 5...</p>
+            </div>
+        </div>
+    </div>
+
+<script src="home.js"></script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Organizer Dashboard</title>
+  
+    <!-- FullCalendar CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js"></script>
+    <link rel="stylesheet" href="organizer.css" />
+  </head>
+  
+  <body>
+    <div class="sidebar">
+      <h2>Organizer Panel</h2>
+      <ul>
+        <li onclick="navigateToClubs()" class="nav-item">Clubs</li>
+        <li onclick="navigateToEvents()" class="nav-item">Event Registered</li>
+        <li onclick="navigateToVenues()" class="nav-item">Venues</li>
+        <li onclick="navigateToFinalAllotment()" class="nav-item">Final Allotment</li>
+        <li onclick="window.location.href='vibrance.html'" class="nav-item">VIBRANCE EVENTS</li>
+      </ul>
+    </div>
+  
+    <div class="main-content">
+      <h1>Welcome to the Organizer Dashboard</h1>
+  
+      <!-- ✅ Only one div with ID "calendar" -->
+      <iframe 
+  src="https://calendar.google.com/calendar/embed?src=en.indian%23holiday%40group.v.calendar.google.com&ctz=Asia%2FKolkata" 
+  style="border: 0" 
+  width="100%" 
+  height="600" 
+  frameborder="0" 
+  scrolling="no">
+</iframe>
+
+    </div>
+  
+    <!-- FullCalendar JS -->
+    
+  
+    <script src="organizer.js"> </script>
+</body>
+
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VIBRANCE 2025 - Interactive Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="vibrance.css">
+</head>
+<body>
+  <!-- Header with Theme Switcher -->
+  <div class="header">
+    <h1>VIBRANCE 2025</h1>
+    <div class="theme-switcher">
+      <div class="theme-btn theme-purple" onclick="setTheme('purple')"></div>
+      <div class="theme-btn theme-orange" onclick="setTheme('orange')"></div>
+      <div class="theme-btn theme-green" onclick="setTheme('green')"></div>
+      <div class="theme-btn theme-dark" onclick="setTheme('dark')"></div>
+    </div>
+  </div>
+
+  <!-- Excel-like Table -->
+  <div class="table-container">
+    <table id="vibranceTable">
+      <thead>
+        <tr>
+          <th>Date <i class="fas fa-sort"></i></th>
+          <th>Event <i class="fas fa-sort"></i></th>
+          <th>Club <i class="fas fa-sort"></i></th>
+          <th>Date Allotted<i class="fas fa-sort"></i></th>
+          <th>Venue <i class="fas fa-sort"></i></th>
+          <th>Time <i class="fas fa-sort"></i></th>
+          <th>Coordinator 1 <i class="fas fa-sort"></i></th>
+          <th>Phone No.<i class="fas fa-sort"></i></th>
+          <th>Coordinator 2 <i class="fas fa-sort"></i></th>
+          <th>Phone No. <i class="fas fa-sort"></i></th>
+          <th>Club Email <i class="fas fa-sort"></i></th>
+          <th>Fee <i class="fas fa-sort"></i></th>
+          <th>Approved By <i class="fas fa-sort"></i></th>
+          <th>Date Of Approval <i class="fas fa-sort"></i></th>
+          <th>Status <i class="fas fa-sort"></i></th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Filled by JS -->
+      </tbody>
+    </table>
+  </div>
+
+  <script src="vibrance.js"></script>
+  <script>
+    // ===== THEME SWITCHER =====
+    function setTheme(theme) {
+      const root = document.documentElement;
+      switch (theme) {
+        case 'purple':
+          root.style.setProperty('--primary', '#6a11cb');
+          root.style.setProperty('--secondary', '#fc4a1a');
+          root.style.setProperty('--accent', '#f7b733');
+          root.style.setProperty('--dark', '#2c3e50');
+          break;
+        case 'orange':
+          root.style.setProperty('--primary', '#fc4a1a');
+          root.style.setProperty('--secondary', '#f7b733');
+          root.style.setProperty('--accent', '#6a11cb');
+          root.style.setProperty('--dark', '#333');
+          break;
+        case 'green':
+          root.style.setProperty('--primary', '#11998e');
+          root.style.setProperty('--secondary', '#38ef7d');
+          root.style.setProperty('--accent', '#f7b733');
+          root.style.setProperty('--dark', '#1a2a3a');
+          break;
+        case 'dark':
+          root.style.setProperty('--primary', '#2c3e50');
+          root.style.setProperty('--secondary', '#4ca1af');
+          root.style.setProperty('--accent', '#f7b733');
+          root.style.setProperty('--dark', '#1a1a2e');
+          break;
+      }
+    }
+
+    // ===== RESIZABLE COLUMNS =====
+    document.querySelectorAll('th').forEach(th => {
+      const resizer = document.createElement('div');
+      resizer.classList.add('resizer');
+      th.appendChild(resizer);
+
+      resizer.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        document.addEventListener('mousemove', resize);
+        document.addEventListener('mouseup', stopResize);
+        resizer.classList.add('active');
+      });
+
+      function resize(e) {
+        const newWidth = e.clientX - th.getBoundingClientRect().left;
+        th.style.width = `${newWidth}px`;
+      }
+
+      function stopResize() {
+        document.removeEventListener('mousemove', resize);
+        resizer.classList.remove('active');
+      }
+    });
+
+    // ===== SORTING FUNCTIONALITY =====
+    document.querySelectorAll('th').forEach(th => {
+      th.addEventListener('click', () => {
+        const index = Array.from(th.parentNode.children).indexOf(th);
+        const rows = Array.from(document.querySelectorAll('tbody tr'));
+        const isAscending = !th.classList.contains('asc');
+        
+        rows.sort((a, b) => {
+          const aVal = a.children[index].textContent;
+          const bVal = b.children[index].textContent;
+          return isAscending ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+        });
+
+        document.querySelector('tbody').innerHTML = '';
+        rows.forEach(row => document.querySelector('tbody').appendChild(row));
+
+        document.querySelectorAll('th').forEach(h => h.classList.remove('asc', 'desc'));
+        th.classList.add(isAscending ? 'asc' : 'desc');
+      });
+    });
+
+    // ===== EDITABLE CELLS =====
+    document.querySelectorAll('td').forEach(td => {
+      td.addEventListener('dblclick', () => {
+        const oldValue = td.textContent;
+        const input = document.createElement('input');
+        input.value = oldValue;
+        td.innerHTML = '';
+        td.appendChild(input);
+        input.focus();
+
+        input.addEventListener('blur', () => {
+          td.textContent = input.value;
+        });
+
+        input.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') {
+            td.textContent = input.value;
+          }
+        });
+      });
+    });
+    // Fetch and populate data from backend
+fetch('/api/final-events')
+  .then(res => res.json())
+  .then(data => {
+    const tbody = document.querySelector("#vibranceTable tbody");
+    tbody.innerHTML = ''; // Clear existing rows
+
+    data.forEach(event => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td class="editable">${event.present_date}</td>
+        <td class="editable">${event.event_name}</td>
+        <td>${event.club_name}</td>
+        <td>${event.date_allotted}</td>
+        <td>${event.venue_allotted}</td>
+        <td>${event.time_from} - ${event.time_to}</td>
+        <td>${event.student_coord1}</td>
+        <td>${event.phone1}</td>
+        <td>${event.student_coord2}</td>
+        <td>${event.phone2}</td>
+        <td>${event.club_mail}</td>
+        <td>₹${event.reg_fee}</td>
+        <td>${event.approved_by}</td>
+        <td>${event.date_of_approval}</td>
+        <td><span class="status-badge">Approved</span></td>
+      `;
+      tbody.appendChild(row);
+    });
+  })
+  .catch(err => {
+    console.error("Failed to load events:", err);
+    document.querySelector("#vibranceTable tbody").innerHTML = `
+      <tr><td colspan="9" style="text-align: center; color: var(--danger);">Failed to load data. Please try again.</td></tr>
+    `;
+  });
+  </script>
+</body>
+</html>

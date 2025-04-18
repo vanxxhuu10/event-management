@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Club Signup</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="signup.css">
+</head>
+<body>
+    <div class="logo-container">
+        <img src="/pictures/emc_logo.jpg" alt="Logo 1">
+    </div>
+    <div class="signup-container">
+        <h2>Club Signup</h2>
+        <!-- Added error message container -->
+        <div id="error-message" style="color: red; margin: 10px 0; text-align: center;"></div>
+        <form id="signupForm">
+            <label for="club_name">Club Name</label>
+            <input type="text" id="club_name" name="club_name" placeholder="Enter Club Name" required>
+            
+            <label for="club_email">Club Email ID</label>
+            <input type="email" id="club_email" name="club_email" placeholder="Enter Club Email" required>
+            
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="Enter Password" required>
+
+            <label for="confirm_password">Confirm Password</label>
+            <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm Password" required>
+            
+            <button type="submit">Signup</button>
+            <p class="login-link">Already have an account? <a href="login.html">Login here</a></p>
+        </form>
+    </div>
+    <script src="signup.js"></script>
+</body>
+</html>

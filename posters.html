@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Posters</title>
+  <link rel="stylesheet" href="base.css" />
+  <link rel="stylesheet" href="posters.css">
+</head>
+<body>
+  <div class="container">
+    <h1 class="text-center">Posters</h1>
+
+    <div class="poster-carousel">
+        <div class="carousel-track">
+          <img src="https://img.freepik.com/free-psd/night-music-event-poster-template_23-2148674299.jpg" alt="Poster 1">
+          <img src="https://img.freepik.com/free-vector/business-seminar-event-poster-template_23-2148812794.jpg" alt="Poster 2">
+          <img src="https://img.freepik.com/free-psd/fashion-event-poster-template_23-2148681427.jpg" alt="Poster 3">
+          <img src="https://img.freepik.com/free-vector/online-conference-poster-template_23-2148838022.jpg" alt="Poster 4">
+          <img src="https://img.freepik.com/premium-psd/community-meeting-poster-template_505751-2897.jpg" alt="Poster 5">
+          <img src="https://img.freepik.com/free-vector/startup-conference-poster-template_23-2148813864.jpg" alt="Poster 6">
+          <img src="https://img.freepik.com/free-psd/art-exhibition-poster-template_23-2148681385.jpg" alt="Poster 7">
+          <img src="https://img.freepik.com/free-vector/night-party-poster-template_23-2148772967.jpg" alt="Poster 8">
+          <img src="https://img.freepik.com/free-vector/digital-event-poster_23-2148851891.jpg" alt="Poster 9">
+          <img src="https://img.freepik.com/free-psd/online-webinar-poster-template_23-2148691193.jpg" alt="Poster 10">
+        </div>
+      </div>
+      
+
+    <form id="posterForm" class="form-section">
+      <div class="form-group">
+        <label for="event_date">Present Date</label>
+        <input type="date" id="event_date" name="event_date" required />
+      </div>
+      <div class="form-group">
+        <label for="event_name">Event Name</label>
+        <input type="text" id="event_name" name="event_name" required />
+      </div>
+      <div class="form-group">
+        <label for="drive_link">Google Drive Link</label>
+        <input type="url" id="drive_link" name="drive_link" placeholder="https://drive.google.com/..." required />
+      </div>
+      <button type="submit" class="btn btn-primary">Add</button>
+    </form>
+
+    <table id="posterTable" class="table mt-3">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Event Name</th>
+          <th>Drive Link</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script src="posters.js"></script>
+</body>
+</html>
