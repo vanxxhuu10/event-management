@@ -111,7 +111,7 @@ document.getElementById("eventForm").addEventListener("submit", function(event) 
         console.log("📦 Form data being sent:", formData);
     
         try {
-            const response = await fetch('/register-event', {
+            const response = await fetch('https://event-management-divk.onrender.com/register-event', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -135,7 +135,7 @@ document.getElementById("eventForm").addEventListener("submit", function(event) 
         }
     });
 
-    fetch('http://localhost:3000/api/venues')
+    fetch('https://event-management-divk.onrender.com/api/venues')
   .then(res => res.json())
   .then(venues => {
       const venueListContainer = document.getElementById('venueList');
