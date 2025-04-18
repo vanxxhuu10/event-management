@@ -777,6 +777,1032 @@ app.get('/api/all-venues', (req, res) => {
     });
   });
   
+app.get("/get-events", (req, res) => {
+    const db = new sqlite3.Database(path.join(__dirname, "events.db"), (err) => {
+      if (err) {
+        console.error("Failed to connect to database:", err.message);
+      } else {
+        console.log("Connected to events.db successfully.");
+      }
+    });
+    db.all("SELECT * FROM events", (err, rows) => {
+      if (err) {
+        console.error("Error fetching events:", err.message);
+        return res.status(500).json({ error: err.message });
+      }
+      res.json(rows);
+    });
+  });
+  
+  // POST Route to update events
+  app.post("/update-events", (req, res) => {
+    const db = new sqlite3.Database(path.join(__dirname, "events.db"), (err) => {
+      if (err) {
+        console.error("Failed to connect to database:", err.message);
+      } else {
+        console.log("Connected to events.db successfully.");
+      }
+    });
+    const events = req.body.events;
+  
+    db.serialize(() => {
+      // Clear all rows from the table but keep ID field
+      db.run("DELETE FROM events", (err) => {
+        if (err) {
+          console.error("Error deleting rows:", err.message);
+          return res.status(500).json({ error: "Failed to clear table." });
+        }
+  
+        const stmt = db.prepare(`
+          INSERT INTO events (
+            eventName, clubName, date1, date2,
+            venue1, venue2, venue3, timeFrom, timeTo,
+            eventDescription, studentCoord1, phone1,
+            studentCoord2, phone2, facultyCoord,
+            clubEmail, fee
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `);
+  
+        for (const row of events) {
+          const values = [
+            row.eventName, row.clubName, row.date1, row.date2,
+            row.venue1, row.venue2, row.venue3, row.timeFrom, row.timeTo,
+            row.eventDescription, row.studentCoord1, row.phone1,
+            row.studentCoord2, row.phone2, row.facultyCoord,
+            row.clubEmail, row.fee
+          ];
+  
+          stmt.run(values, (err) => {
+            if (err) {
+              console.error("Insert error:", err.message);
+              // Make sure to finalize the statement even in case of an error
+              stmt.finalize();
+              return res.status(500).json({ error: "Failed to insert event." });
+            }
+          });
+        }
+  
+        // Finalize the prepared statement after all rows are inserted
+        stmt.finalize((err) => {
+          if (err) {
+            console.error("Statement finalization error:", err.message);
+            return res.status(500).json({ error: "Failed to update table." });
+          }
+          res.json({ message: "Events table updated successfully." });
+        });
+      });
+    });
+  });
+  
+  
+  app.get("/get-uds", (req, res) => {
+    const db = new sqlite3.Database(path.join(__dirname, "uds.db"), (err) => {
+      if (err) {
+        console.error("Failed to connect to uds.db:", err.message);
+      } else {
+        console.log("Connected to uds.db successfully.");
+      }
+    });
+    db.all("SELECT * FROM uds", (err, rows) => {
+      if (err) {
+        console.error("Failed to fetch UDS rows:", err.message);
+        return res.status(500).json({ error: err.message });
+      }
+      res.json(rows);
+    });
+  });
+  
+  // POST: Replace all UDS entries
+  app.post("/update-uds", (req, res) => {
+    const db = new sqlite3.Database(path.join(__dirname, "uds.db"), (err) => {
+      if (err) {
+        console.error("Failed to connect to uds.db:", err.message);
+      } else {
+        console.log("Connected to uds.db successfully.");
+      }
+    });
+    const udsEntries = req.body.uds;
+  
+    // Validate that udsEntries is an array
+    if (!Array.isArray(udsEntries)) {
+      return res.status(400).json({ error: "Invalid data format." });
+    }
+  
+    db.serialize(() => {
+      
+      db.run("DELETE FROM uds", (err) => {
+        
+        if (err) {
+          console.error("Failed to clear UDS table:", err.message);
+          return res.status(500).json({ error: "Failed to clear UDS table." });
+        }
+  
+        const stmt = db.prepare(`
+          INSERT INTO uds (
+            clubName, event_date, event_name,
+            requirement_name, quantity
+          ) VALUES (?, ?, ?, ?, ?)
+        `);
+  
+        let errorOccurred = false;
+  
+        for (const row of udsEntries) {
+          const values = [
+            row.clubName,
+            row.event_date,
+            row.event_name,
+            row.requirement_name,
+            row.quantity
+          ];
+  
+          // Validate required fields
+          if (values.some(v => v === undefined)) {
+            errorOccurred = true;
+            console.error("Missing field in row:", row);
+            continue;
+          }
+  
+          stmt.run(values, (err) => {
+            if (err) {
+              errorOccurred = true;
+              console.error("Insert error in UDS:", err.message);
+            }
+          });
+        }
+  
+        stmt.finalize((err) => {
+          if (err || errorOccurred) {
+            console.error("Finalizing error or insert errors occurred.");
+            return res.status(500).json({ error: "Some rows may have failed to insert." });
+          }
+  
+          res.json({ message: "UDS table updated successfully." });
+        });
+      });
+    });
+  });
+  
+  // Close DB when process exits
+  
+  app.get("/get-posters", (req, res) => {
+    const db = new sqlite3.Database(path.join(__dirname, "posters.db"), (err) => {
+      if (err) {
+        console.error("Failed to connect to posters.db:", err.message);
+        return res.status(500).json({ error: "Database connection failed." });
+      }
+  
+      db.all("SELECT * FROM posters", (err, rows) => {
+        if (err) {
+          console.error("Failed to fetch posters:", err.message);
+          return res.status(500).json({ error: err.message });
+        }
+  
+        res.json(rows);
+        db.close();
+      });
+    });
+  });
+  
+  // POST: Update posters table
+  app.post("/update-posters", (req, res) => {
+    const db = new sqlite3.Database(path.join(__dirname, "posters.db"), (err) => {
+      if (err) {
+        console.error("Failed to connect to posters.db:", err.message);
+        return res.status(500).json({ error: "Database connection failed." });
+      }
+    });
+  
+    const posters = req.body.posters;
+  
+    if (!Array.isArray(posters)) {
+      return res.status(400).json({ error: "Invalid posters data." });
+    }
+  
+    db.serialize(() => {
+      db.run("DELETE FROM posters", (err) => {
+        if (err) {
+          console.error("Failed to delete existing posters:", err.message);
+          return res.status(500).json({ error: "Failed to clear posters table." });
+        }
+  
+        const stmt = db.prepare(`
+          INSERT INTO posters (
+            clubName, event_date, event_name, drive_link, upload_on
+          ) VALUES (?, ?, ?, ?, ?)
+        `);
+  
+        for (const row of posters) {
+          const values = [
+            row.clubName,
+            row.event_date,
+            row.event_name,
+            row.drive_link,
+            row.upload_on || null
+          ];
+  
+          stmt.run(values, (err) => {
+            if (err) {
+              console.error("Insert error in posters:", err.message);
+            }
+          });
+        }
+  
+        stmt.finalize((err) => {
+          if (err) {
+            console.error("Finalizing statement error:", err.message);
+            return res.status(500).json({ error: "Failed to insert posters." });
+          }
+  
+          res.json({ message: "Posters table updated successfully." });
+          db.close();
+        });
+      });
+    });
+  });
+  
+  // GET: Fetch all purchase list items
+app.get("/get-purchaselist", (req, res) => {
+  const db = new sqlite3.Database(path.join(__dirname, "purchaselist.db"), (err) => {
+    if (err) {
+      console.error("Failed to connect to purchaselist.db:", err.message);
+      return res.status(500).json({ error: "Database connection failed." });
+    }
+
+    db.all("SELECT * FROM purchaselist", (err, rows) => {
+      if (err) {
+        console.error("Failed to fetch purchase list:", err.message);
+        return res.status(500).json({ error: err.message });
+      }
+
+      res.json(rows);
+      db.close();
+    });
+  });
+});
+
+// POST: Update purchase list items
+app.post("/update-purchaselist", (req, res) => {
+  const db = new sqlite3.Database(path.join(__dirname, "purchaselist.db"), (err) => {
+    if (err) {
+      console.error("Failed to connect to purchaselist.db:", err.message);
+      return res.status(500).json({ error: "Database connection failed." });
+    }
+  });
+
+  const purchaselist = req.body.purchaselist;
+
+  if (!Array.isArray(purchaselist)) {
+    return res.status(400).json({ error: "Invalid purchaselist data." });
+  }
+
+  db.serialize(() => {
+    db.run("DELETE FROM purchaselist", (err) => {
+      if (err) {
+        console.error("Failed to clear purchaselist table:", err.message);
+        return res.status(500).json({ error: "Failed to clear purchase list." });
+      }
+
+      const stmt = db.prepare(`
+        INSERT INTO purchaselist (
+          clubName, event_date, event_name,
+          item_name, quantity, price, source,
+          amount, upload_time
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `);
+
+      for (const row of purchaselist) {
+        const values = [
+          row.clubName,
+          row.event_date,
+          row.event_name,
+          row.item_name,
+          row.quantity,
+          row.price,
+          row.source,
+          row.amount,
+          row.upload_time || null
+        ];
+
+        stmt.run(values, (err) => {
+          if (err) console.error("Insert error in purchaselist:", err.message);
+        });
+      }
+
+      stmt.finalize((err) => {
+        if (err) {
+          console.error("Finalizing insert error:", err.message);
+          return res.status(500).json({ error: "Failed to insert purchase list data." });
+        }
+
+        res.json({ message: "Purchase list updated successfully." });
+        db.close();
+      });
+    });
+  });
+});
+
+
+
+// Get all housekeeping data from housekeeping.db
+// GET: Fetch all housekeeping data
+app.get("/get-housekeeping", (req, res) => {
+  const db = new sqlite3.Database(path.join(__dirname, "housekeeping.db"), (err) => {
+    if (err) {
+      console.error("Failed to connect to housekeeping.db:", err.message);
+      return res.status(500).json({ error: "Database connection failed." });
+    }
+
+    db.all("SELECT * FROM housekeeping", (err, rows) => {
+      if (err) {
+        console.error("Failed to fetch housekeeping data:", err.message);
+        return res.status(500).json({ error: err.message });
+      }
+
+      res.json(rows);
+      db.close();
+    });
+  });
+});
+
+// POST: Update housekeeping data
+app.post("/update-housekeeping", (req, res) => {
+  const db = new sqlite3.Database(path.join(__dirname, "housekeeping.db"), (err) => {
+    if (err) {
+      console.error("Failed to connect to housekeeping.db:", err.message);
+      return res.status(500).json({ error: "Database connection failed." });
+    }
+  });
+
+  const housekeeping = req.body.housekeeping;
+
+  if (!Array.isArray(housekeeping)) {
+    return res.status(400).json({ error: "Invalid housekeeping data." });
+  }
+
+  db.serialize(() => {
+    db.run("DELETE FROM housekeeping", (err) => {
+      if (err) {
+        console.error("Failed to clear housekeeping table:", err.message);
+        return res.status(500).json({ error: "Failed to clear housekeeping table." });
+      }
+
+      const stmt = db.prepare(`
+        INSERT INTO housekeeping (
+          clubName, event_date, event_name,
+          requirement_name, quantity
+        ) VALUES (?, ?, ?, ?, ?)
+      `);
+
+      for (const row of housekeeping) {
+        const values = [
+          row.clubName,
+          row.event_date,
+          row.event_name,
+          row.requirement_name,
+          row.quantity
+        ];
+
+        stmt.run(values, (err) => {
+          if (err) console.error("Insert error in housekeeping:", err.message);
+        });
+      }
+
+      stmt.finalize((err) => {
+        if (err) {
+          console.error("Finalizing error:", err.message);
+          return res.status(500).json({ error: "Failed to finalize insert." });
+        }
+
+        res.json({ message: "Housekeeping table updated successfully." });
+        db.close();
+      });
+    });
+  });
+});
+
+
+// GET: Fetch all WiFi details
+app.get("/get-wifi", (req, res) => {
+  const db = new sqlite3.Database(path.join(__dirname, "wifi.db"), (err) => {
+    if (err) {
+      console.error("Failed to connect to wifi.db:", err.message);
+      return res.status(500).json({ error: "Database connection failed." });
+    }
+
+    db.all("SELECT * FROM wifi", (err, rows) => {
+      if (err) {
+        console.error("Failed to fetch wifi data:", err.message);
+        return res.status(500).json({ error: err.message });
+      }
+
+      res.json(rows);
+      db.close();
+    });
+  });
+});
+
+// POST: Update WiFi details
+app.post("/update-wifi", (req, res) => {
+  const db = new sqlite3.Database(path.join(__dirname, "wifi.db"), (err) => {
+    if (err) {
+      console.error("Failed to connect to wifi.db:", err.message);
+      return res.status(500).json({ error: "Database connection failed." });
+    }
+  });
+
+  const wifiDetails = req.body.wifiDetails;
+
+  if (!Array.isArray(wifiDetails)) {
+    return res.status(400).json({ error: "Invalid WiFi data format." });
+  }
+
+  db.serialize(() => {
+    db.run("DELETE FROM wifi", (err) => {
+      if (err) {
+        console.error("Failed to clear wifi table:", err.message);
+        return res.status(500).json({ error: "Failed to clear wifi table." });
+      }
+
+      const stmt = db.prepare(`
+        INSERT INTO wifi (
+          clubName, event_date, event_name,
+          requirement_name, quantity
+        ) VALUES (?, ?, ?, ?, ?)
+      `);
+
+      for (const row of wifiDetails) {
+        const values = [
+          row.clubName,
+          row.event_date,
+          row.event_name,
+          row.requirement_name,
+          row.quantity
+        ];
+
+        stmt.run(values, (err) => {
+          if (err) console.error("Insert error in wifi:", err.message);
+        });
+      }
+
+      stmt.finalize((err) => {
+        if (err) {
+          console.error("Finalizing error:", err.message);
+          return res.status(500).json({ error: "Failed to finalize insert." });
+        }
+
+        res.json({ message: "WiFi details updated successfully." });
+        db.close();
+      });
+    });
+  });
+});
+
+
+// GET: Fetch all sponsors
+app.get("/get-sponsors", (req, res) => {
+  const db = new sqlite3.Database(path.join(__dirname, "sponsors.db"), (err) => {
+    if (err) {
+      console.error("Failed to connect to sponsors.db:", err.message);
+      return res.status(500).json({ error: "Database connection failed." });
+    }
+
+    db.all("SELECT * FROM sponsors", (err, rows) => {
+      if (err) {
+        console.error("Failed to fetch sponsors data:", err.message);
+        return res.status(500).json({ error: err.message });
+      }
+
+      res.json(rows);
+      db.close();
+    });
+  });
+});
+
+// POST: Update sponsors data
+app.post("/update-sponsors", (req, res) => {
+  const db = new sqlite3.Database(path.join(__dirname, "sponsors.db"), (err) => {
+    if (err) {
+      console.error("Failed to connect to sponsors.db:", err.message);
+      return res.status(500).json({ error: "Database connection failed." });
+    }
+  });
+
+  const sponsorsDetails = req.body.sponsorsDetails;
+
+  if (!Array.isArray(sponsorsDetails)) {
+    return res.status(400).json({ error: "Invalid sponsors data format." });
+  }
+
+  db.serialize(() => {
+    db.run("DELETE FROM sponsors", (err) => {
+      if (err) {
+        console.error("Failed to clear sponsors table:", err.message);
+        return res.status(500).json({ error: "Failed to clear sponsors table." });
+      }
+
+      const stmt = db.prepare(`
+        INSERT INTO sponsors (
+          clubName, event_date, event_name, sponsor_name, amount, status
+        ) VALUES (?, ?, ?, ?, ?, ?)
+      `);
+
+      for (const row of sponsorsDetails) {
+        const values = [
+          row.clubName,
+          row.event_date,
+          row.event_name,
+          row.sponsor_name,
+          row.amount,
+          row.status
+        ];
+
+        stmt.run(values, (err) => {
+          if (err) console.error("Insert error in sponsors:", err.message);
+        });
+      }
+
+      stmt.finalize((err) => {
+        if (err) {
+          console.error("Finalizing error:", err.message);
+          return res.status(500).json({ error: "Failed to finalize insert." });
+        }
+
+        res.json({ message: "Sponsors details updated successfully." });
+        db.close();
+      });
+    });
+  });
+});
+
+
+// GET: Fetch all organizers
+app.get("/get-organizers", (req, res) => {
+  const db = new sqlite3.Database(path.join(__dirname, 'organizers.db'), (err) => {
+    if (err) {
+      console.error('Failed to connect to organizers.db:', err.message);
+      return res.status(500).json({ error: "Database connection failed." });
+    }
+
+    db.all("SELECT * FROM organizers", (err, rows) => {
+      if (err) {
+        console.error("Error fetching organizers:", err.message);
+        return res.status(500).json({ error: err.message });
+      }
+
+      res.json(rows);
+      db.close();
+    });
+  });
+});
+
+// POST: Update organizers
+app.post("/update-organizers", (req, res) => {
+  const db = new sqlite3.Database(path.join(__dirname, 'organizers.db'), (err) => {
+    if (err) {
+      console.error('Failed to connect to organizers.db:', err.message);
+      return res.status(500).json({ error: "Database connection failed." });
+    }
+  });
+
+  const organizers = req.body.organizers;
+
+  if (!Array.isArray(organizers)) {
+    return res.status(400).json({ error: "Invalid organizers data format." });
+  }
+
+  db.serialize(() => {
+    db.run("DELETE FROM organizers", (err) => {
+      if (err) {
+        console.error("Failed to clear organizers table:", err.message);
+        return res.status(500).json({ error: "Failed to clear table." });
+      }
+
+      const stmt = db.prepare(`
+        INSERT INTO organizers (identity, id, password)
+        VALUES (?, ?, ?)
+      `);
+
+      for (const row of organizers) {
+        const values = [row.identity, row.id, row.password];
+        stmt.run(values, (err) => {
+          if (err) console.error("Insert error:", err.message);
+        });
+      }
+
+      stmt.finalize((err) => {
+        if (err) {
+          console.error("Finalizing error:", err.message);
+          return res.status(500).json({ error: "Insert finalization failed." });
+        }
+
+        res.json({ message: "Organizers table updated successfully." });
+        db.close();
+      });
+    });
+  });
+});
+
+
+// GET: Fetch final events
+// GET: Fetch final events
+app.get("/get-final-events", (req, res) => {
+  const db = new sqlite3.Database(path.join(__dirname, "Final_Events.db"), (err) => {
+    if (err) {
+      console.error("Failed to connect to Final_Events.db:", err.message);
+      return res.status(500).json({ error: "Database connection failed." });
+    }
+
+    db.all("SELECT * FROM final_events", (err, rows) => {
+      if (err) {
+        console.error("Failed to fetch final events:", err.message);
+        return res.status(500).json({ error: err.message });
+      }
+
+      res.json(rows);
+      db.close();
+    });
+  });
+});
+
+// POST: Update final events
+app.post("/update-final-events", (req, res) => {
+  const db = new sqlite3.Database(path.join(__dirname, "Final_Events.db"), (err) => {
+    if (err) {
+      console.error("Failed to connect to Final_Events.db:", err.message);
+      return res.status(500).json({ error: "Database connection failed." });
+    }
+  });
+
+  const events = req.body.events;
+
+  if (!Array.isArray(events)) {
+    return res.status(400).json({ error: "Invalid data format. Expected an array." });
+  }
+
+  db.serialize(() => {
+    db.run("DELETE FROM final_events", (err) => {
+      if (err) {
+        console.error("Error clearing table:", err.message);
+        return res.status(500).json({ error: "Failed to clear final_events table." });
+      }
+
+      const stmt = db.prepare(`
+        INSERT INTO final_events (
+          present_date, event_name, club_name, date_allotted,
+          venue_allotted, time_from, time_to,
+          student_coord1, phone1, student_coord2, phone2,
+          club_mail, reg_fee, approved_by, date_of_approval, comments
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `);
+
+      events.forEach((row) => {
+        const values = [
+          row.present_date, row.event_name, row.club_name, row.date_allotted,
+          row.venue_allotted, row.time_from, row.time_to,
+          row.student_coord1, row.phone1, row.student_coord2, row.phone2,
+          row.club_mail, row.reg_fee, row.approved_by, row.date_of_approval, row.comments
+        ];
+        stmt.run(values, (err) => {
+          if (err) console.error("Insert error:", err.message);
+        });
+      });
+
+      stmt.finalize((err) => {
+        if (err) {
+          console.error("Statement finalize error:", err.message);
+          return res.status(500).json({ error: "Insert finalization failed." });
+        }
+
+        res.json({ message: "Final Events table updated successfully." });
+        db.close();
+      });
+    });
+  });
+});
+
+
+
+// GET: Retrieve all users
+app.get("/get-users", (req, res) => {
+  const db = new sqlite3.Database(path.join(__dirname, "database", "users.db"), (err) => {
+    if (err) {
+      console.error("Failed to connect to users.db:", err.message);
+      return res.status(500).json({ error: "Database connection failed." });
+    }
+
+    db.all("SELECT * FROM users", (err, rows) => {
+      if (err) {
+        console.error("Failed to fetch users:", err.message);
+        res.status(500).json({ error: err.message });
+      } else {
+        res.json(rows);
+      }
+      db.close();
+    });
+  });
+});
+
+// POST: Update all users
+app.post("/update-users", (req, res) => {
+  const db = new sqlite3.Database(path.join(__dirname, "database", "users.db"), (err) => {
+    if (err) {
+      console.error("Failed to connect to users.db:", err.message);
+      return res.status(500).json({ error: "Database connection failed." });
+    }
+  });
+
+  const users = req.body.events; // Note: still using 'events' key
+
+  if (!Array.isArray(users)) {
+    return res.status(400).json({ error: "Invalid format: expected an array under 'events'." });
+  }
+
+  db.serialize(() => {
+    db.run("DELETE FROM users", (err) => {
+      if (err) {
+        console.error("Failed to clear users table:", err.message);
+        return res.status(500).json({ error: "Could not clear existing users." });
+      }
+
+      const stmt = db.prepare(`
+        INSERT INTO users (club_name, club_email, password)
+        VALUES (?, ?, ?)
+      `);
+
+      users.forEach((user) => {
+        stmt.run([
+          user.club_name,
+          user.club_email,
+          user.password
+        ], (err) => {
+          if (err) console.error("Failed to insert user:", err.message);
+        });
+      });
+
+      stmt.finalize((err) => {
+        if (err) {
+          console.error("Finalization error:", err.message);
+          return res.status(500).json({ error: "Finalizing insert failed." });
+        }
+
+        res.json({ message: "Users table updated successfully." });
+        db.close();
+      });
+    });
+  });
+});
+
+
+// POST route to update Allotted Venues data
+app.post("/update-allotted-venues", (req, res) => {
+  const db = new sqlite3.Database(path.join(__dirname, "Venues.db"), err => {
+    if (err) {
+      console.error("Failed to connect to Venues.db:", err.message);
+    } else {
+      console.log("Connected to Venues.db successfully.");
+    }
+  });
+
+  const venues = req.body.events;
+
+  db.serialize(() => {
+    db.run("DELETE FROM VenuesAlloted");
+
+    const stmt = db.prepare(`
+      INSERT INTO VenuesAlloted (date, event_name, club_name, venue_alloted, time_from, time_to)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `);
+
+    for (const venue of venues) {
+      stmt.run([venue.date, venue.event_name, venue.club_name, venue.venue_alloted, venue.time_from, venue.time_to]);
+    }
+
+    stmt.finalize();
+    res.json({ message: "Allotted Venues updated successfully." });
+  });
+});
+
+
+
+
+// Fetch All Venues data
+app.get("/get-all-venues", (req, res) => {
+  console.log("GET /get-all-venues called");
+
+  const db = new sqlite3.Database(path.join(__dirname, "Venues.db"), (err) => {
+    if (err) {
+      console.error("Failed to connect to Venues.db:", err.message);
+      return res.status(500).json({ error: err.message });
+    }
+
+    db.all("SELECT * FROM AllVenues", (err, rows) => {
+      if (err) {
+        console.error("Failed to fetch data:", err.message);
+        return res.status(500).json({ error: err.message });
+      }
+      console.log("Fetched rows:", rows);
+      res.json(rows);
+    });
+  });
+});
+
+
+// Update All Venues data (except id)
+app.get("/get-all-venues", (req, res) => {
+  const db = new sqlite3.Database(path.join(__dirname, "Venues.db"), (err) => {
+    if (err) {
+      console.error("Connection failed:", err.message);
+      return res.status(500).json({ error: "Failed to connect to database." });
+    }
+  });
+
+  db.all("SELECT * FROM AllVenues", (err, rows) => {
+    if (err) {
+      console.error("Query failed:", err.message);
+      return res.status(500).json({ error: err.message });
+    }
+
+    res.json(rows);
+    db.close();
+  });
+});
+
+// POST: Update all venues
+app.post("/update-all-venues", (req, res) => {
+  const db = new sqlite3.Database(path.join(__dirname, "Venues.db"), (err) => {
+    if (err) {
+      console.error("Connection failed:", err.message);
+      return res.status(500).json({ error: "Failed to connect to database." });
+    }
+  });
+
+  const venues = req.body.venues;
+
+  if (!Array.isArray(venues)) {
+    return res.status(400).json({ error: "Expected an array of venues." });
+  }
+
+  db.serialize(() => {
+    db.run("DELETE FROM AllVenues", (err) => {
+      if (err) {
+        console.error("Failed to clear venues:", err.message);
+        return res.status(500).json({ error: "Could not clear venues." });
+      }
+
+      const stmt = db.prepare("INSERT INTO AllVenues (venue_name) VALUES (?)");
+
+      venues.forEach((venue) => {
+        // Skip empty rows
+        if (!venue.venue_name || venue.venue_name.trim() === "") return;
+
+        stmt.run([venue.venue_name], (err) => {
+          if (err) console.error("Insert failed:", err.message);
+        });
+      });
+
+      stmt.finalize((err) => {
+        if (err) {
+          console.error("Finalizing failed:", err.message);
+          return res.status(500).json({ error: "Failed to save venues." });
+        }
+
+        res.json({ message: "All venues updated successfully." });
+        db.close();
+      });
+    });
+  });
+});
+
+app.get("/get-venues-allotted", (req, res) => {
+  const db = new sqlite3.Database(path.join(__dirname, "Venues.db"), (err) => {
+    if (err) {
+      console.error("Failed to connect to Venues.db:", err.message);
+      return res.status(500).json({ error: err.message });
+    }
+  });
+
+  db.all("SELECT * FROM VenuesAlloted", (err, rows) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    res.json(rows);
+    db.close(); // Close the database connection
+  });
+});
+
+// POST: Update Venues Allotted data
+app.post("/update-venues-allotted", (req, res) => {
+  const db = new sqlite3.Database(path.join(__dirname, "Venues.db"), (err) => {
+    if (err) {
+      console.error("Failed to connect to Venues.db:", err.message);
+      return res.status(500).json({ error: err.message });
+    }
+  });
+
+  const venues = req.body.venues; // Modified venue data
+
+  // Validate if the provided data is an array
+  if (!Array.isArray(venues) || venues.length === 0) {
+    return res.status(400).json({ error: "Invalid data format or empty venues array." });
+  }
+
+  db.serialize(() => {
+    // Clear all existing records (except the id)
+    db.run("DELETE FROM VenuesAlloted");
+
+    const stmt = db.prepare(`
+      INSERT INTO VenuesAlloted (date, event_name, club_name, venue_alloted, time_from, time_to)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `);
+
+    // Insert all the updated venue data
+    venues.forEach(venue => {
+      stmt.run([venue.date, venue.event_name, venue.club_name, venue.venue_alloted, venue.time_from, venue.time_to]);
+    });
+
+    stmt.finalize((err) => {
+      if (err) {
+        console.error("Failed to update VenuesAlloted:", err.message);
+        return res.status(500).json({ error: "Failed to update VenuesAlloted." });
+      }
+      res.json({ message: "VenuesAlloted data updated successfully." });
+      db.close(); // Close the database connection
+    });
+  });
+});
+
+app.get("/get-venues-pending", (req, res) => {
+  const db = new sqlite3.Database(path.join(__dirname, "Venues.db"), (err) => {
+    if (err) {
+      console.error("Failed to connect to Venues.db:", err.message);
+      return res.status(500).json({ error: err.message });
+    }
+  });
+
+  db.all("SELECT * FROM VenuesPending", (err, rows) => {
+    if (err) {
+      console.error("Error fetching data:", err.message);
+      return res.status(500).json({ error: err.message });
+    }
+
+    // Log rows for debugging
+    // console.log("Fetched Venues Pending:", rows);
+    res.json(rows);
+    db.close(); // Ensure the database connection is closed
+  });
+});
+
+// POST: Update Venues Pending data
+app.post("/update-venues-pending", (req, res) => {
+  const db = new sqlite3.Database(path.join(__dirname, "Venues.db"), (err) => {
+    if (err) {
+      console.error("Failed to connect to Venues.db:", err.message);
+      return res.status(500).json({ error: err.message });
+    }
+  });
+
+  const venues = req.body.venues; // Modified venue data
+
+  // Validate input data
+  if (!Array.isArray(venues) || venues.length === 0) {
+    return res.status(400).json({ error: "Invalid data format or empty venues array." });
+  }
+
+  db.serialize(() => {
+    db.run("DELETE FROM VenuesPending"); // Delete all existing data (except id)
+
+    const stmt = db.prepare(`
+      INSERT INTO VenuesPending (date, venue_pending, reason)
+      VALUES (?, ?, ?)
+    `);
+
+    // Insert all the updated venue data
+    venues.forEach(venue => {
+      // Ensure venue data is valid before inserting
+      if (venue.date && venue.venue_pending && venue.reason) {
+        stmt.run([venue.date, venue.venue_pending, venue.reason]);
+      } else {
+        console.warn("Skipping invalid venue data:", venue);
+      }
+    });
+
+    stmt.finalize((err) => {
+      if (err) {
+        console.error("Failed to update VenuesPending:", err.message);
+        return res.status(500).json({ error: "Failed to update VenuesPending." });
+      }
+
+      console.log("VenuesPending data updated successfully.");
+      res.json({ message: "VenuesPending data updated successfully." });
+      db.close(); // Close the database connection
+    });
+  });
+});
+
+
+app.listen(PORT, () => {
+    console.log(`🚀 Server running at http://localhost:${PORT}`);
+});
 
 
 app.listen(PORT, () => {
