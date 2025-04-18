@@ -1,8 +1,4 @@
-// Fetch and populate data from backend
-
-
-
-fetch('/api/final-events')
+fetch('https://event-management-divk.onrender.com/api/final-events')
 .then(res => res.json())
 .then(data => {
   const tbody = document.getElementById("vibranceTable").querySelector("tbody");
