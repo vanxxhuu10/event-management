@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-      const response = await fetch('/clubs');
+      const response = await fetch('https://event-management-divk.onrender.com/clubs');
       if (!response.ok) throw new Error('Network response was not ok');
   
       const clubs = await response.json();
@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   
   async function fetchAndDisplayEvents(clubName) {
     try {
-      const response = await fetch(`/events/${encodeURIComponent(clubName)}`);
+      const response = await fetch(`https://event-management-divk.onrender.com/events/${encodeURIComponent(clubName)}`);
       if (!response.ok) throw new Error('Failed to fetch events');
   
       const events = await response.json();
