@@ -99,7 +99,7 @@ function submitSponsors() {
       });
   });
 
-  fetch('/submit-sponsors', {
+  fetch('https://event-management-divk.onrender.com/submit-sponsors', {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json'
