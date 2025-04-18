@@ -1493,9 +1493,10 @@ app.get("/get-users", (req, res) => {
     db.all("SELECT * FROM users", (err, rows) => {
       if (err) {
         console.error("Failed to fetch users:", err.message);
-        res.status(500).json({ error: err.message });
+        return res.status(500).json({ error: err.message });
       } else {
-        res.json(rows);
+        // Ensure that the data is sent as JSON
+        res.json(rows);  // Sending the rows as JSON
       }
       db.close();
     });
@@ -1511,10 +1512,10 @@ app.post("/update-users", (req, res) => {
     }
   });
 
-  const users = req.body.events; // Note: still using 'events' key
+  const users = req.body.users; // Note: using 'users' key here to match the frontend format
 
   if (!Array.isArray(users)) {
-    return res.status(400).json({ error: "Invalid format: expected an array under 'events'." });
+    return res.status(400).json({ error: "Invalid format: expected an array under 'users'." });
   }
 
   db.serialize(() => {
@@ -1524,17 +1525,10 @@ app.post("/update-users", (req, res) => {
         return res.status(500).json({ error: "Could not clear existing users." });
       }
 
-      const stmt = db.prepare(`
-        INSERT INTO users (club_name, club_email, password)
-        VALUES (?, ?, ?)
-      `);
+      const stmt = db.prepare(`INSERT INTO users (club_name, club_email, password) VALUES (?, ?, ?)`);
 
       users.forEach((user) => {
-        stmt.run([
-          user.club_name,
-          user.club_email,
-          user.password
-        ], (err) => {
+        stmt.run([user.club_name, user.club_email, user.password], (err) => {
           if (err) console.error("Failed to insert user:", err.message);
         });
       });
@@ -1545,7 +1539,7 @@ app.post("/update-users", (req, res) => {
           return res.status(500).json({ error: "Finalizing insert failed." });
         }
 
-        res.json({ message: "Users table updated successfully." });
+        res.json({ message: "Users table updated successfully." }); // Send success as JSON
         db.close();
       });
     });
