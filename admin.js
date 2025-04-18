@@ -1847,15 +1847,23 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentData = [];
 
     function loadUsersTable() {
-      fetch("https://event-management-divk.onrender.com/get-users") // Replace with your actual Render backend URL
-        .then(response => response.json())
+      fetch("https://event-management-divk.onrender.com/get-users")
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
         .then(data => {
-          currentData = data;
+          // Ensure data is an array
+          currentData = Array.isArray(data) ? data : [];
           document.getElementById("tableTitle").innerText = "Users Table";
           renderEditableUsersTable(currentData);
         })
         .catch(err => {
           console.error("Error fetching users:", err);
+          // Initialize with empty array if there's an error
+          renderEditableUsersTable([]);
         });
     }
 
@@ -1863,20 +1871,26 @@ document.addEventListener("DOMContentLoaded", function () {
       const container = document.getElementById("venueTableContainer");
       container.innerHTML = "";
 
+      // Ensure data is always an array
+      if (!Array.isArray(data)) {
+        data = [];
+      }
+
       const table = document.createElement("table");
       table.border = "1";
       table.style.width = "100%";
 
+      // Default headers if no data
       const headers = data.length > 0 ? Object.keys(data[0]) : ["id", "club_name", "club_email", "password"];
 
       const thead = table.createTHead();
       const headerRow = thead.insertRow();
 
-      for (let i = 0; i < headers.length; i++) {
+      headers.forEach(header => {
         const th = document.createElement("th");
-        th.innerText = headers[i];
+        th.innerText = header;
         headerRow.appendChild(th);
-      }
+      });
 
       const actionTh = document.createElement("th");
       actionTh.innerText = "Actions";
@@ -1886,10 +1900,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (data.length === 0) {
         const tr = tbody.insertRow();
-        for (let i = 0; i < headers.length; i++) {
-          const cell = tr.insertCell();
-          cell.innerText = "No data available";
-        }
+        const cell = tr.insertCell();
+        cell.colSpan = headers.length + 1; // +1 for actions column
+        cell.innerText = "No data available";
       } else {
         data.forEach((row, index) => {
           const tr = tbody.insertRow();
@@ -1897,7 +1910,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const cell = tr.insertCell();
             const input = document.createElement("input");
             input.type = "text";
-            input.value = row[header];
+            input.value = row[header] || "";
             input.dataset.key = header;
             input.dataset.index = index;
             input.onchange = updateUserValue;
@@ -1927,6 +1940,7 @@ document.addEventListener("DOMContentLoaded", function () {
       container.appendChild(submitBtn);
     }
 
+    // Rest of your functions remain the same...
     function updateUserValue(e) {
       const index = e.target.dataset.index;
       const key = e.target.dataset.key;
@@ -1950,7 +1964,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function submitUserData() {
-      fetch("https://event-management-divk.onrender.com/update-users", {  // Replace with your actual Render backend URL
+      fetch("https://event-management-divk.onrender.com/update-users", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -1958,7 +1972,12 @@ document.addEventListener("DOMContentLoaded", function () {
         },
         body: JSON.stringify({ users: currentData })
       })
-        .then(res => res.json())
+        .then(res => {
+          if (!res.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return res.json();
+        })
         .then(result => {
           alert(result.message || "Users data updated!");
           loadUsersTable();
@@ -1971,7 +1990,6 @@ document.addEventListener("DOMContentLoaded", function () {
     loadUsersTable();
   });
 });
-
 
 
 
