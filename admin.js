@@ -1842,152 +1842,61 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-document.addEventListener("DOMContentLoaded", function () {
-  document.getElementById("usersBtn").addEventListener("click", () => {
-    let currentData = [];
+app.post("/update-users", (req, res) => {
+  const users = req.body.users;
 
-    function loadUsersTable() {
-      fetch("https://event-management-divk.onrender.com/get-users")
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          return response.json();
-        })
-        .then(data => {
-          // Ensure data is an array
-          currentData = Array.isArray(data) ? data : [];
-          document.getElementById("tableTitle").innerText = "Users Table";
-          renderEditableUsersTable(currentData);
-        })
-        .catch(err => {
-          console.error("Error fetching users:", err);
-          // Initialize with empty array if there's an error
-          renderEditableUsersTable([]);
-        });
+  if (!Array.isArray(users)) {
+    return res.status(400).json({ error: "Invalid format: expected an array of users." });
+  }
+
+  const db = new sqlite3.Database(path.join(__dirname, "database", "users.db"), (err) => {
+    if (err) {
+      console.error("Failed to connect to users.db:", err.message);
+      return res.status(500).json({ error: "Database connection failed." });
     }
 
-    function renderEditableUsersTable(data) {
-      const container = document.getElementById("venueTableContainer");
-      container.innerHTML = "";
+    db.serialize(() => {
+      db.run("BEGIN TRANSACTION");
 
-      // Ensure data is always an array
-      if (!Array.isArray(data)) {
-        data = [];
-      }
+      // Clear existing data (optional - you might want to keep existing IDs)
+      db.run("DELETE FROM users", (err) => {
+        if (err) {
+          db.run("ROLLBACK");
+          db.close();
+          return res.status(500).json({ error: "Could not clear existing users." });
+        }
 
-      const table = document.createElement("table");
-      table.border = "1";
-      table.style.width = "100%";
-
-      // Default headers if no data
-      const headers = data.length > 0 ? Object.keys(data[0]) : ["id", "club_name", "club_email", "password"];
-
-      const thead = table.createTHead();
-      const headerRow = thead.insertRow();
-
-      headers.forEach(header => {
-        const th = document.createElement("th");
-        th.innerText = header;
-        headerRow.appendChild(th);
-      });
-
-      const actionTh = document.createElement("th");
-      actionTh.innerText = "Actions";
-      headerRow.appendChild(actionTh);
-
-      const tbody = table.createTBody();
-
-      if (data.length === 0) {
-        const tr = tbody.insertRow();
-        const cell = tr.insertCell();
-        cell.colSpan = headers.length + 1; // +1 for actions column
-        cell.innerText = "No data available";
-      } else {
-        data.forEach((row, index) => {
-          const tr = tbody.insertRow();
-          headers.forEach((header) => {
-            const cell = tr.insertCell();
-            const input = document.createElement("input");
-            input.type = "text";
-            input.value = row[header] || "";
-            input.dataset.key = header;
-            input.dataset.index = index;
-            input.onchange = updateUserValue;
-            cell.appendChild(input);
+        const stmt = db.prepare("INSERT INTO users (club_name, club_email, password) VALUES (?, ?, ?)");
+        
+        // Insert new data - let SQLite handle auto-incrementing IDs
+        users.forEach((user) => {
+          // Only include fields that should be in the database
+          stmt.run([
+            user.club_name,
+            user.club_email,
+            user.password
+          ], (err) => {
+            if (err) console.error("Failed to insert user:", err.message);
           });
-
-          const actionCell = tr.insertCell();
-          const deleteBtn = document.createElement("button");
-          deleteBtn.innerText = "Delete";
-          deleteBtn.onclick = () => deleteUserRow(index);
-          actionCell.appendChild(deleteBtn);
         });
-      }
 
-      container.appendChild(table);
-
-      const addBtn = document.createElement("button");
-      addBtn.innerText = "Add Row";
-      addBtn.onclick = addUserRow;
-      addBtn.style.marginTop = "20px";
-      container.appendChild(addBtn);
-
-      const submitBtn = document.createElement("button");
-      submitBtn.innerText = "Submit";
-      submitBtn.style.marginTop = "20px";
-      submitBtn.onclick = submitUserData;
-      container.appendChild(submitBtn);
-    }
-
-    // Rest of your functions remain the same...
-    function updateUserValue(e) {
-      const index = e.target.dataset.index;
-      const key = e.target.dataset.key;
-      currentData[index][key] = e.target.value;
-    }
-
-    function deleteUserRow(index) {
-      currentData.splice(index, 1);
-      renderEditableUsersTable(currentData);
-    }
-
-    function addUserRow() {
-      const newRow = {
-        id: "",
-        club_name: "",
-        club_email: "",
-        password: ""
-      };
-      currentData.push(newRow);
-      renderEditableUsersTable(currentData);
-    }
-
-    function submitUserData() {
-      fetch("https://event-management-divk.onrender.com/update-users", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json"
-        },
-        body: JSON.stringify({ users: currentData })
-      })
-        .then(res => {
-          if (!res.ok) {
-            throw new Error('Network response was not ok');
+        stmt.finalize((err) => {
+          if (err) {
+            db.run("ROLLBACK");
+            db.close();
+            return res.status(500).json({ error: "Finalizing insert failed." });
           }
-          return res.json();
-        })
-        .then(result => {
-          alert(result.message || "Users data updated!");
-          loadUsersTable();
-        })
-        .catch(err => {
-          alert("Error updating users: " + err);
-        });
-    }
 
-    loadUsersTable();
+          db.run("COMMIT", (err) => {
+            db.close();
+            if (err) {
+              return res.status(500).json({ error: "Commit failed." });
+            }
+            res.json({ message: "Users table updated successfully." });
+          });
+        });
+      });
+    });
   });
 });
 
