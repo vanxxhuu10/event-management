@@ -16,7 +16,7 @@ document.getElementById('posterForm').addEventListener('submit', async function 
     const payload = { eventDate: date, eventName: eventName, driveLink: driveLink, clubName: clubName, currentTime: currentTime };
 
     try {
-        const res = await fetch('/submit-poster', {
+        const res = await fetch('https://event-management-divk.onrender.com/submit-poster', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
