@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    fetch("/api/final-clubs")
+    fetch("https://event-management-divk.onrender.com/api/final-clubs")
       .then(res => res.json())
       .then(data => {
         const container = document.getElementById("clubButtons");
@@ -130,7 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
       comments: row.querySelector("textarea[name='Comments']").value
     };
   
-    fetch("/api/submit-final-event", {
+    fetch("https://event-management-divk.onrender.com/api/submit-final-event", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data)
