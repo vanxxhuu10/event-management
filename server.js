@@ -326,7 +326,7 @@ app.post('/submit-sponsors', (req, res) => {
 });
 
 app.get('/clubs', (req, res) => {
-    const dbPath = path.join(__dirname, 'database', 'users.db');
+    const dbPath = path.join(__dirname, 'users.db');
 const db = new sqlite3.Database(dbPath, (err) => {
     if (err) {
         console.error('Failed to connect to database:', err.message);
@@ -604,7 +604,7 @@ app.get('/api/all-venues', (req, res) => {
 
   
   app.get("/api/final-clubs", (req, res) => {
-    const db = new sqlite3.Database("./database/users.db");
+    const db = new sqlite3.Database("./users.db");
   
     const query = "SELECT DISTINCT club_name FROM users";
   
