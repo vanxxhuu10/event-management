@@ -25,7 +25,7 @@ function verifyOrganizer() {
     const id = document.getElementById("orgId").value.trim();
     const password = document.getElementById("orgPassword").value.trim();
 
-    fetch("/verify-organizer", {
+    fetch("https://event-management-divk.onrender.com/verify-organizer", {
         method: "POST",
         headers: { 
             "Content-Type": "application/json",
