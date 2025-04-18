@@ -1484,77 +1484,109 @@ app.post("/update-final-events", (req, res) => {
 
 // GET: Retrieve all users
 app.get("/get-users", (req, res) => {
-  const db = new sqlite3.Database(path.join(__dirname, "database", "users.db"), (err) => {
+  console.log("Fetching users...");
+  const dbPath = path.join(__dirname, "database", "users.db");
+  const db = new sqlite3.Database(dbPath);
+
+  db.all("SELECT id, club_name, club_email, password FROM users", [], (err, rows) => {
+    db.close();
+
     if (err) {
-      console.error("Failed to connect to users.db:", err.message);
-      return res.status(500).json({ error: "Database connection failed." });
+      console.error("Database error:", err);
+      return res.status(500).json({
+        success: false,
+        error: "Database error",
+        message: err.message
+      });
     }
 
-    db.all("SELECT * FROM users", (err, rows) => {
-      db.close(); // Close the connection immediately after query
-
-      if (err) {
-        console.error("Failed to fetch users:", err.message);
-        return res.status(500).json({ error: "Failed to fetch users." });
-      }
-      
-      // Ensure we always return an array, even if empty
-      res.json(rows || []);
+    console.log(`Fetched ${rows.length} users`);
+    res.json({
+      success: true,
+      data: rows
     });
   });
 });
 
+// Update users (replace all)
 app.post("/update-users", (req, res) => {
-  const users = req.body.users;
+  const { users } = req.body;
 
   if (!Array.isArray(users)) {
-    return res.status(400).json({ error: "Invalid format: expected an array of users." });
+    return res.status(400).json({
+      success: false,
+      error: "Invalid data",
+      message: "Expected an array of users"
+    });
   }
 
-  const db = new sqlite3.Database(path.join(__dirname, "database", "users.db"), (err) => {
-    if (err) {
-      console.error("Failed to connect to users.db:", err.message);
-      return res.status(500).json({ error: "Database connection failed." });
-    }
+  console.log(`Updating ${users.length} users...`);
+  const dbPath = path.join(__dirname, "database", "users.db");
+  const db = new sqlite3.Database(dbPath);
 
-    db.serialize(() => {
-      db.run("BEGIN TRANSACTION");
+  db.serialize(() => {
+    db.run("BEGIN TRANSACTION");
 
-      // Clear existing data (optional - you might want to keep existing IDs)
-      db.run("DELETE FROM users", (err) => {
-        if (err) {
-          db.run("ROLLBACK");
-          db.close();
-          return res.status(500).json({ error: "Could not clear existing users." });
+    // First delete all existing users
+    db.run("DELETE FROM users", function(err) {
+      if (err) {
+        db.run("ROLLBACK");
+        db.close();
+        return res.status(500).json({
+          success: false,
+          error: "Database error",
+          message: "Failed to clear existing users: " + err.message
+        });
+      }
+
+      console.log(`Cleared existing users, inserting ${users.length} new records...`);
+
+      // Prepare insert statement
+      const stmt = db.prepare("INSERT INTO users (club_name, club_email, password) VALUES (?, ?, ?)");
+      let errors = [];
+
+      // Insert each user
+      users.forEach(user => {
+        if (!user.club_name || !user.club_email || !user.password) {
+          errors.push(`Missing required fields for user: ${JSON.stringify(user)}`);
+          return;
         }
 
-        const stmt = db.prepare("INSERT INTO users (club_name, club_email, password) VALUES (?, ?, ?)");
-        
-        // Insert new data - let SQLite handle auto-incrementing IDs
-        users.forEach((user) => {
-          // Only include fields that should be in the database
-          stmt.run([
-            user.club_name,
-            user.club_email,
-            user.password
-          ], (err) => {
-            if (err) console.error("Failed to insert user:", err.message);
-          });
-        });
-
-        stmt.finalize((err) => {
+        stmt.run([user.club_name, user.club_email, user.password], (err) => {
           if (err) {
-            db.run("ROLLBACK");
-            db.close();
-            return res.status(500).json({ error: "Finalizing insert failed." });
+            errors.push(`Failed to insert user ${user.club_email}: ${err.message}`);
+          }
+        });
+      });
+
+      stmt.finalize((err) => {
+        if (err || errors.length > 0) {
+          db.run("ROLLBACK");
+          db.close();
+          return res.status(500).json({
+            success: false,
+            error: "Database error",
+            message: "Failed to insert users",
+            details: err ? err.message : errors
+          });
+        }
+
+        // Commit transaction
+        db.run("COMMIT", (commitErr) => {
+          db.close();
+
+          if (commitErr) {
+            return res.status(500).json({
+              success: false,
+              error: "Database error",
+              message: "Commit failed: " + commitErr.message
+            });
           }
 
-          db.run("COMMIT", (err) => {
-            db.close();
-            if (err) {
-              return res.status(500).json({ error: "Commit failed." });
-            }
-            res.json({ message: "Users table updated successfully." });
+          console.log("Successfully updated users table");
+          res.json({
+            success: true,
+            message: `Successfully updated ${users.length} users`
           });
         });
       });
