@@ -1847,7 +1847,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentData = [];
 
     function loadUsersTable() {
-      fetch("https://your-backend-url.onrender.com/get-users") // Replace with your actual Render backend URL
+      fetch("https://event-management-divk.onrender.com/get-users") // Replace with your actual Render backend URL
         .then(response => response.json())
         .then(data => {
           currentData = data;
@@ -1950,7 +1950,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function submitUserData() {
-      fetch("https://your-backend-url.onrender.com/update-users", {  // Replace with your actual Render backend URL
+      fetch("https://event-management-divk.onrender.com/update-users", {  // Replace with your actual Render backend URL
         method: "POST",
         headers: {
           "Content-Type": "application/json",
