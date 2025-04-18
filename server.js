@@ -11,7 +11,6 @@ const PORT = 3000;
 app.use(express.static(__dirname));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'pictures')));
 
 app.use((req, res, next) => {
     res.setHeader("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-eval'");
@@ -95,7 +94,7 @@ app.post('/login', (req, res) => {
 
 // Signup Route
 app.post('/signup', (req, res) => {
-  const db = new sqlite3.Database('./database/users.db', (err) => {
+  const db = new sqlite3.Database('./users.db', (err) => {
     if (err) {
         console.error('Error connecting to users.db:', err);
     } else {
