@@ -146,7 +146,7 @@ const eventDate = document.getElementById('eventDate').value;
     
         // ✅ Send data to backend (example)
         try {
-            const response = await fetch('/submit-requirements', {
+            const response = await fetch('https://event-management-divk.onrender.com/submit-requirements', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
