@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        const response = await fetch('/clubs');
+        const response = await fetch('https://event-management-divk.onrender.com/clubs');
         if (!response.ok) throw new Error('Network response was not ok');
 
         const clubs = await response.json();
