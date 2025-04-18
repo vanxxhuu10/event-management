@@ -1848,7 +1848,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function loadUsersTable() {
       fetch("/get-users")
-        .then(response => response.json())
+        .then(response => response.json())  // Ensure response is parsed as JSON
         .then(data => {
           console.log("Data received from server:", data); // Log the response
 
@@ -1964,11 +1964,11 @@ document.addEventListener("DOMContentLoaded", function () {
       fetch("/update-users", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json"  // Ensures data is sent as JSON
         },
-        body: JSON.stringify({ users: currentData })
+        body: JSON.stringify({ users: currentData })  // Send currentData as JSON
       })
-        .then(res => res.json())
+        .then(res => res.json())  // Ensure response is parsed as JSON
         .then(result => {
           alert(result.message || "Users data updated!");
           loadUsersTable();
