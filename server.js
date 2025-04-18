@@ -8,11 +8,10 @@ const sqlite3 = require('sqlite3').verbose();
 const app = express();
 const PORT = 3000;
 
-app.use(express.static('public'));
+app.use(express.static(__dirname));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'public')));
-app.use('/pictures', express.static(path.join(__dirname, 'pictures')));
+app.use(express.static(path.join(__dirname, 'pictures')));
 
 app.use((req, res, next) => {
     res.setHeader("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-eval'");
