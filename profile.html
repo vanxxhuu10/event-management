@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Club Profile</title>
+  <link rel="stylesheet" href="profile.css">
+</head>
+<body>
+
+    <h1 id="clubName">Club Name</h1>
+    <h2>Events Registered</h2>
+  
+    <table id="eventTable">
+      <thead>
+        <tr>
+          <th>Event Name</th>
+          <th>Date 1</th>
+          <th>Date 2</th>
+          <th>Venue 1</th>
+          <th>Venue 2</th>
+          <th>Venue 3</th>
+          <th>Time From</th>
+          <th>Time To</th>
+          <th>Description</th>
+          <th>Coord 1</th>
+          <th>Phone 1</th>
+          <th>Coord 2</th>
+          <th>Phone 2</th>
+          <th>Faculty</th>
+          <th>Email</th>
+          <th>Fee</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="eventBody">
+        <!-- Rows go here -->
+      </tbody>
+    </table>
+    <!-- Existing Event Section Ends Here -->
+    
+
+    <button class="submitEventsBtn" onclick="submitData()">Submit</button>
+
+    <h2>UDS</h2>
+
+    <table id="udsTable">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Event Name</th>
+            <th>Requirement</th>
+            <th>Quantity</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+    <button class="submitUDSBtn" onclick="submitData()">Submit</button>
+
+
+    <h2>Housekeeping Details</h2>
+<table id="housekeepingTable">
+  <thead>
+    <tr>
+      <th>Event Date</th>
+      <th>Event Name</th>
+      <th>Requirement</th>
+      <th>Quantity</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody id="housekeepingBody">
+    <!-- Data will be filled dynamically -->
+  </tbody>
+</table>
+
+
+<button class="submitHousekeepingBtn">Submit</button>
+
+
+<h2>Wi-Fi Requirements</h2>
+<table id="wifiTable">
+  <thead>
+    <tr>
+      <th>Event Date</th>
+      <th>Event Name</th>
+      <th>Requirement</th>
+      <th>Quantity</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody id="wifiBody">
+    <!-- Data will be filled dynamically -->
+  </tbody>
+</table>
+<button class="submitWifiBtn">Submit</button>
+
+
+<h2>Sponsors</h2>
+<table id="sponsorsTable">
+  <thead>
+    <tr>
+      <th>Event Date</th>
+      <th>Event Name</th>
+      <th>Sponsor Name</th>
+      <th>Amount</th>
+      <th>Status</th>
+      <th>Uploaded On</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody id="sponsorsBody">
+    <!-- Sponsors data will be added here dynamically -->
+  </tbody>
+</table>
+<button class="submitSponsorsBtn">Submit</button>
+
+
+<h2>Posters</h2>
+<table id="postersTable">
+  <thead>
+    <tr>
+      <th>Event Date</th>
+      <th>Event Name</th>
+      <th>Drive Link</th>
+      <th>Uploaded On</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody id="postersBody">
+    <!-- Poster data will be inserted here -->
+  </tbody>
+</table>
+<button class="submitPostersBtn">Submit</button>
+
+
+<h2>Purchase List</h2>
+<table id="purchaseTable">
+  <thead>
+    <tr>
+      <th>Event Date</th>
+      <th>Event Name</th>
+      <th>Item Name</th>
+      <th>Quantity</th>
+      <th>Price</th>
+      <th>Source</th>
+      <th>Amount</th>
+      <th>Uploaded Time</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody id="purchaseBody">
+    <!-- Populated by JS -->
+  </tbody>
+</table>
+<button class="submitPurchaseBtn">Submit</button>
+
+  <script src="profile.js"></script>
+</body>
+</html>
