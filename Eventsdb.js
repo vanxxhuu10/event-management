@@ -1,20 +1,18 @@
-const { Pool } = require('pg');
+const sqlite3 = require('sqlite3').verbose();
 
-const pool = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_NAME,
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT,
-  ssl: {
-    rejectUnauthorized: false // Required for Railway, Neon, etc.
+// Create a new SQLite database or open it if it already exists
+const db = new sqlite3.Database('events.db', (err) => {
+  if (err) {
+    console.error('Error opening database:', err);
+  } else {
+    console.log('Database opened successfully.');
   }
 });
 
-// Create the events table
+// SQL query to create the events table
 const createTableQuery = `
   CREATE TABLE IF NOT EXISTS events (
-    id SERIAL PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     eventName TEXT NOT NULL,
     clubName TEXT NOT NULL,
     date1 TEXT NOT NULL,
@@ -35,20 +33,20 @@ const createTableQuery = `
   );
 `;
 
-pool.connect()
-  .then(client => {
-    return client.query(createTableQuery)
-      .then(() => {
-        console.log('✅ events table created or already exists.');
-        client.release();
-      })
-      .catch(err => {
-        client.release();
-        console.error('❌ Error creating events table:', err.stack);
-      });
-  })
-  .catch(err => {
-    console.error('❌ Database connection failed:', err.stack);
-  });
+// Create the table if it doesn't already exist
+db.run(createTableQuery, (err) => {
+  if (err) {
+    console.error('Error creating table:', err);
+  } else {
+    console.log('Table "events" created successfully.');
+  }
+});
 
-module.exports = pool;
+// Close the database connection
+db.close((err) => {
+  if (err) {
+    console.error('Error closing the database:', err);
+  } else {
+    console.log('Database closed.');
+  }
+});
