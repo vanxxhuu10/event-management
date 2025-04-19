@@ -7,7 +7,7 @@ const sqlite3 = require('sqlite3').verbose();
 
 const app = express();
 const PORT = 3000;
-
+const pool = require('./dbb');
 app.use(express.static(__dirname));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -16,6 +16,16 @@ app.use((req, res, next) => {
     res.setHeader("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-eval'");
 
     next();
+});
+
+router.get('/entries', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM entries');
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server error');
+  }
 });
 
 // API to verify organizer
