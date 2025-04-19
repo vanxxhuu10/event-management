@@ -7,7 +7,6 @@ const sqlite3 = require('sqlite3').verbose();
 const router = express.Router();
 const app = express();
 const PORT = 3000;
-const pool = require('./dbb');
 app.use(express.static(__dirname));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -16,16 +15,6 @@ app.use((req, res, next) => {
     res.setHeader("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-eval'");
 
     next();
-});
-
-router.get('/entries', async (req, res) => {
-  try {
-    const result = await pool.query('SELECT * FROM entries');
-    res.json(result.rows);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Server error');
-  }
 });
 
 // API to verify organizer
@@ -1806,20 +1795,13 @@ app.post("/update-venues-pending", (req, res) => {
 });
 
 app.get('/api/events', (req, res) => {
-    const pool = require('./Eventsdb');
+  const pool = require('./Eventsdb');;
   const clubName = req.query.clubName;
-
-  const query = `SELECT * FROM events WHERE clubName = $1`;
-
-  pool.query(query, [clubName], (err, result) => {
-    if (err) {
-      console.error('❌ DB error:', err);
-      return res.status(500).json({ error: "DB error" });
-    }
-    res.json(result.rows); // result.rows contains the array of matching rows
+  db.all(`SELECT * FROM events WHERE clubName = ?`, [clubName], (err, rows) => {
+    if (err) return res.status(500).json({ error: "DB error" });
+    res.json(rows);
   });
 });
-
 
 app.post('/api/submit-events', (req, res) => {
   const pool = require('./Eventsdb');;
