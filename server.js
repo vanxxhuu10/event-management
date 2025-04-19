@@ -1806,16 +1806,23 @@ app.post("/update-venues-pending", (req, res) => {
 });
 
 app.get('/api/events', (req, res) => {
-  const db = new sqlite3.Database('./events.db');
+    const pool = require('./Eventsdb');
   const clubName = req.query.clubName;
-  db.all(`SELECT * FROM events WHERE clubName = ?`, [clubName], (err, rows) => {
-    if (err) return res.status(500).json({ error: "DB error" });
-    res.json(rows);
+
+  const query = `SELECT * FROM events WHERE clubName = $1`;
+
+  pool.query(query, [clubName], (err, result) => {
+    if (err) {
+      console.error('❌ DB error:', err);
+      return res.status(500).json({ error: "DB error" });
+    }
+    res.json(result.rows); // result.rows contains the array of matching rows
   });
 });
 
+
 app.post('/api/submit-events', (req, res) => {
-  const db = new sqlite3.Database('./events.db');
+  const pool = require('./Eventsdb');;
   const { clubName, events } = req.body;
   db.serialize(() => {
     db.run(`DELETE FROM events WHERE clubName = ?`, [clubName], err => {
