@@ -1,212 +1,198 @@
-@keyframes fadeIn {
+:root {
+    --primary: #2c3e50;
+    --secondary: #2980b9;
+    --accent: #e67e22;
+    --bg-color: #f5f7fa;
+    --text-color: #2d3436;
+    --muted-text: #636e72;
+    --white: #ffffff;
+    --border: #dcdde1;
+    --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    --transition: all 0.4s ease;
+  }
+  
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  body {
+    font-family: 'Segoe UI', 'Poppins', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    overflow-x: hidden;
+    animation: fadeInBody 1s ease forwards;
+  }
+  
+  /* Main Heading */
+  .main-heading {
+    font-size: 3rem;
+    text-align: center;
+    margin-top: 4rem;
+    color: var(--primary);
+    animation: slideInDown 1s ease-in-out;
+  }
+  
+  /* Introduction Text */
+  .intro-text {
+    max-width: 750px;
+    margin: 1.5rem auto;
+    text-align: center;
+    font-size: 1.1rem;
+    color: var(--muted-text);
+    animation: fadeInUp 1.2s ease-in-out;
+  }
+  
+  /* Call-To-Action Button */
+  .cta-button {
+    display: block;
+    margin: 2rem auto;
+    background: linear-gradient(to right, var(--secondary), var(--accent));
+    color: var(--white);
+    font-size: 1rem;
+    font-weight: bold;
+    padding: 0.75rem 1.8rem;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+  }
+  
+  .cta-button i {
+    margin-left: 0.5rem;
+    transition: transform 0.3s ease;
+  }
+  
+  .cta-button:hover i {
+    transform: translateX(5px);
+  }
+  
+  .cta-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    z-index: -1;
+    transition: left 0.4s;
+  }
+  
+  .cta-button:hover::before {
+    left: 0;
+  }
+  
+  /* Slider Container */
+  /* Slider Container */
+.slider-container {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    margin-top: 4rem;
+  }
+  
+  /* Slider - Infinite Scroll Animation */
+  .slider {
+    display: flex;
+    width: calc(300px * 8); /* 4 slides duplicated for looping */
+    animation: scrollSlider 30s linear infinite;
+  }
+  
+  .slide {
+    flex: 0 0 300px;
+    height: 200px;
+    background-color: var(--white);
+    border-radius: 15px;
+    box-shadow: var(--shadow);
+    background-size: cover;
+    background-position: center;
+    margin: 0 1rem;
+    transition: transform 0.4s, box-shadow 0.4s;
+  }
+  
+  .slide:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  }
+  
+  @keyframes scrollSlider {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  
+  
+  /* Sample background images (you can replace them with real ones) */
+  .slide:nth-child(1) { background-image: url('https://source.unsplash.com/featured/?event'); }
+  .slide:nth-child(2) { background-image: url('https://source.unsplash.com/featured/?conference'); }
+  .slide:nth-child(3) { background-image: url('https://source.unsplash.com/featured/?concert'); }
+  .slide:nth-child(4) { background-image: url('https://source.unsplash.com/featured/?celebration'); }
+  
+  /* Footer */
+  footer {
+    text-align: center;
+    padding: 2rem 1rem;
+    font-size: 0.9rem;
+    color: var(--muted-text);
+    border-top: 1px solid var(--border);
+    margin-top: 4rem;
+    animation: fadeIn 2s ease;
+  }
+  
+  /* Animations */
+  @keyframes slideInDown {
+    0% { opacity: 0; transform: translateY(-50px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes fadeInUp {
+    0% { opacity: 0; transform: translateY(40px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes fadeIn {
     0% { opacity: 0; }
     100% { opacity: 1; }
   }
-
-  @keyframes slideIn {
-    0% { transform: translateY(-20px); opacity: 0; }
-    100% { transform: translateY(0); opacity: 1; }
+  
+  @keyframes fadeInBody {
+    from { opacity: 0; }
+    to { opacity: 1; }
   }
-
-  button:active {
-    transform: scale(0.98);
-    transition: all 0.2s ease;
-  }
-
-  input:focus, textarea:focus {
-    outline: none;
-    border-color: #4a90e2;
-    box-shadow: 0 0 5px #4a90e2;
-  }
-
-  h3 {
-    animation: slideIn 0.6s ease-out;
+  /* Motivational Quote Styling */
+.quote-box {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px 20px;
+    border-left: 5px solid #ff6b6b;
+    border-radius: 8px;
+    backdrop-filter: blur(5px);
+    font-family: 'Segoe UI', sans-serif;
+    color: #680606;
+    font-size: 1rem;
+    max-width: 300px;
+    animation: fadeIn 2s ease-out forwards;
+    opacity: 0;
+    z-index: 10;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   }
   
-body {
-    font-family: 'Poppins', sans-serif;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-    color: #fff;
-}
-
-.logo-container {
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    margin-bottom: 30px;
-    animation: fadeInLogo 1.5s ease-in-out;
-}
-
-@keyframes fadeInLogo {
-    0% { opacity: 0; transform: translateY(-30px); }
-    100% { opacity: 1; transform: translateY(0); }
-}
-
-.logo-container img {
-    width: 120px;
-    max-width: 15vw;
-    border-radius: 8px;
-    transition: transform 0.3s ease-in-out;
-}
-
-.logo-container img:hover {
-    transform: scale(1.1);
-}
-
-.login-container {
-    background: #fff;
-    padding: 40px 50px;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-    width: 100%;
-    max-width: 450px;
-    text-align: center;
-    animation: fadeInContainer 1s ease-in-out;
-}
-
-@keyframes fadeInContainer {
-    0% { opacity: 0; transform: translateY(-20px); }
-    100% { opacity: 1; transform: translateY(0); }
-}
-
-.login-container h2 {
-    color: #333;
-    font-size: 28px;
-    margin-bottom: 30px;
-    font-weight: 600;
-}
-
-.identity-heading, .event-type-heading {
-    font-size: 22px;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 15px;
-    text-align: left;
-    width: 100%;
-    padding-left: 10px;
-}
-
-.identity-container {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    margin-bottom: 30px;
-}
-
-.identity-box:hover {
-    background: #e6e6ff;
-    transform: scale(1.05);
-}
-
-.identity-content {
-    display: none;
-    margin-top: 10px;
-    font-size: 16px;
-    color: #333;
-    text-align: left;
-}
-
-.identity-selected {
-    background: #667eea;
-    color: #333
-}
-
-.event-type-box,.identity-box {
-    display: block;
-    background: #e99d9d;
-    padding: 20px;
-    margin-top: 20px;
-    width: 100%;
-    max-width: 410px;
-    font-size: 20px;
-    font-weight: 600;
-    color: #333;
-    border-radius: 10px;
-    text-align: center;
-    transition: background 0.3s ease-in-out, transform 0.3s ease-in-out;
-    cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.event-type-box:hover {
-    background: #e6e6ff;
-    transform: scale(1.05);
-}
-
-.identity-selected {
-    background: #667eea;
-    color: #333
-}
-
-.login-container button {
-    width: 100%;
-    padding: 14px;
-    background: #667eea;
-    color: #333;
-    border: none;
-    border-radius: 8px;
-    font-size: 18px;
-    cursor: pointer;
-    transition: background 0.3s ease-in-out, transform 0.3s ease-in-out;
-    margin-top: 20px;
-}
-
-.login-container button:hover {
-    background: #5a67d8;
-    transform: translateY(-3px);
-}
-
-.login-container button:active {
-    transform: translateY(1px);
-}
-
-@media (max-width: 480px) {
-    .logo-container {
-        gap: 15px;
+  .quote-box i {
+    margin-right: 8px;
+    color: #ff6b6b;
+  }
+  
+  @keyframes fadeIn {
+    to {
+      opacity: 1;
     }
-
-    .login-container {
-        padding: 30px;
-        width: 90%;
-    }
-
-    .login-container h2 {
-        font-size: 24px;
-    }
-
-    .identity-container {
-        flex-direction: column;
-        gap: 15px;
-    }
-
-    .identity-box {
-        width: 100%;
-    }
-
-    .event-type-box {
-        max-width: 100%;
-    }
-}
-.event-type-box {
-    padding: 10px 20px;
-    ;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.event-type-box:hover {
-    background-color: #f0f0f0;
-}
-
-.identity-selected {
-    background-color: #007bff;
-    color: #333;
-    border-color: #007bff;
-}
+  }
+  
+  
