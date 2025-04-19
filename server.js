@@ -1795,7 +1795,390 @@ app.post("/update-venues-pending", (req, res) => {
   });
 });
 
+app.get('/api/events', (req, res) => {
+  const db = new sqlite3.Database('./Events.db');
+  const clubName = req.query.clubName;
+  db.all(`SELECT * FROM events WHERE clubName = ?`, [clubName], (err, rows) => {
+    if (err) return res.status(500).json({ error: "DB error" });
+    res.json(rows);
+  });
+});
 
+app.post('/api/submit-events', (req, res) => {
+  const db = new sqlite3.Database('./Events.db');
+  const { clubName, events } = req.body;
+  db.serialize(() => {
+    db.run(`DELETE FROM events WHERE clubName = ?`, [clubName], err => {
+      if (err) return res.status(500).json({ error: "Failed to delete old records" });
+
+      const stmt = db.prepare(`
+        INSERT INTO events (
+          eventName, clubName, date1, date2, venue1, venue2, venue3, 
+          timeFrom, timeTo, eventDescription, studentCoord1, phone1, 
+          studentCoord2, phone2, facultyCoord, clubEmail, fee
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `);
+
+      for (const e of events) {
+        stmt.run([
+          e.eventName, e.clubName, e.date1, e.date2, e.venue1, e.venue2, e.venue3,
+          e.timeFrom, e.timeTo, e.eventDescription, e.studentCoord1, e.phone1,
+          e.studentCoord2, e.phone2, e.facultyCoord, e.clubEmail, e.fee
+        ]);
+      }
+
+      stmt.finalize();
+      res.json({ message: "Events saved successfully!" });
+    });
+  });
+});
+
+
+app.get('/api/uds', (req, res) => {
+  const udsDb = new sqlite3.Database(path.join(__dirname, 'uds.db'), err => {
+    if (err) console.error('Error opening UDS DB:', err.message);
+    else console.log('Connected to uds.db');
+  });
+  const clubName = req.query.clubName;
+
+  if (!clubName) return res.status(400).json({ error: 'Club name is required.' });
+
+  const query = `
+    SELECT event_date, event_name, requirement_name, quantity
+    FROM uds
+    WHERE clubName = ?
+  `;
+
+  udsDb.all(query, [clubName], (err, rows) => {
+    if (err) {
+      console.error('Error fetching UDS data:', err.message);
+      return res.status(500).json({ error: 'Database error' });
+    }
+    res.json(rows);
+  });
+});
+
+
+app.post('/api/submit-uds', (req, res) => {
+  const udsDb = new sqlite3.Database(path.join(__dirname, 'uds.db'), err => {
+    if (err) console.error('Error opening UDS DB:', err.message);
+    else console.log('Connected to uds.db');
+  });
+  const { clubName, uds } = req.body;
+
+  if (!clubName || !Array.isArray(uds)) {
+    return res.status(400).json({ error: 'Invalid data format' });
+  }
+
+  // Optional: Clear old UDS entries for this club
+  udsDb.run(`DELETE FROM uds WHERE clubName = ?`, [clubName], function (err) {
+    if (err) {
+      console.error('Error deleting old UDS:', err.message);
+      return res.status(500).json({ error: 'Failed to clear old UDS entries' });
+    }
+
+    const insertQuery = `
+      INSERT INTO uds (clubName, event_date, event_name, requirement_name, quantity)
+      VALUES (?, ?, ?, ?, ?)
+    `;
+
+    const stmt = udsDb.prepare(insertQuery);
+    uds.forEach(entry => {
+      stmt.run([entry.clubName, entry.event_date, entry.event_name, entry.requirement_name, entry.quantity]);
+    });
+    stmt.finalize();
+
+    res.json({ message: 'UDS data submitted successfully' });
+  });
+});
+
+
+app.get('/api/housekeeping', (req, res) => {
+  const housekeepingDb = new sqlite3.Database(path.join(__dirname, 'housekeeping.db'), err => {
+    if (err) console.error('Error opening housekeeping DB:', err.message);
+    else console.log('Connected to housekeeping.db');
+  });
+  const clubName = req.query.clubName;
+  if (!clubName) return res.status(400).json({ error: 'Club name is required.' });
+
+  const query = `SELECT * FROM housekeeping WHERE clubName = ?`;
+  housekeepingDb.all(query, [clubName], (err, rows) => {
+    if (err) {
+      console.error('Error fetching housekeeping data:', err.message);
+      return res.status(500).json({ error: 'Database error' });
+    }
+    res.json(rows);
+  });
+});
+
+// POST submit housekeeping data
+app.post('/api/submit-housekeeping', (req, res) => {
+  const housekeepingDb = new sqlite3.Database(path.join(__dirname, 'housekeeping.db'), err => {
+    if (err) console.error('Error opening housekeeping DB:', err.message);
+    else console.log('Connected to housekeeping.db');
+  });
+  const { clubName, items } = req.body;
+  if (!clubName || !Array.isArray(items)) {
+    return res.status(400).json({ error: 'Invalid data.' });
+  }
+
+  const deleteQuery = `DELETE FROM housekeeping WHERE clubName = ?`;
+  housekeepingDb.run(deleteQuery, [clubName], function(err) {
+    if (err) {
+      console.error('Error deleting old housekeeping data:', err.message);
+      return res.status(500).json({ error: 'Delete failed' });
+    }
+
+    const insertQuery = `
+      INSERT INTO housekeeping (clubName, event_date, event_name, requirement_name, quantity)
+      VALUES (?, ?, ?, ?, ?)
+    `;
+
+    const stmt = housekeepingDb.prepare(insertQuery);
+
+    items.forEach(item => {
+      stmt.run(clubName, item.event_date, item.event_name, item.requirement_name, item.quantity);
+    });
+
+    stmt.finalize(err => {
+      if (err) {
+        console.error('Error inserting housekeeping data:', err.message);
+        return res.status(500).json({ error: 'Insert failed' });
+      }
+      res.json({ message: 'Housekeeping data submitted successfully.' });
+    });
+  });
+});
+
+
+app.get('/api/wifi', (req, res) => {
+  const wifiDb = new sqlite3.Database(path.join(__dirname, 'wifi.db'), err => {
+    if (err) console.error('Error opening wifi DB:', err.message);
+    else console.log('Connected to wifi.db');
+  });
+  const clubName = req.query.clubName;
+  if (!clubName) return res.status(400).json({ error: 'Club name is required.' });
+
+  const query = `SELECT * FROM wifi WHERE clubName = ?`;
+  wifiDb.all(query, [clubName], (err, rows) => {
+    if (err) {
+      console.error('Error fetching wifi data:', err.message);
+      return res.status(500).json({ error: 'Database error' });
+    }
+    res.json(rows);
+  });
+});
+
+// POST submit wifi data
+app.post('/api/submit-wifi', (req, res) => {
+  const wifiDb = new sqlite3.Database(path.join(__dirname, 'wifi.db'), err => {
+    if (err) console.error('Error opening wifi DB:', err.message);
+    else console.log('Connected to wifi.db');
+  });
+  const { clubName, items } = req.body;
+  if (!clubName || !Array.isArray(items)) {
+    return res.status(400).json({ error: 'Invalid data.' });
+  }
+
+  const deleteQuery = `DELETE FROM wifi WHERE clubName = ?`;
+  wifiDb.run(deleteQuery, [clubName], function(err) {
+    if (err) {
+      console.error('Error deleting old wifi data:', err.message);
+      return res.status(500).json({ error: 'Delete failed' });
+    }
+
+    const insertQuery = `
+      INSERT INTO wifi (clubName, event_date, event_name, requirement_name, quantity)
+      VALUES (?, ?, ?, ?, ?)
+    `;
+
+    const stmt = wifiDb.prepare(insertQuery);
+
+    items.forEach(item => {
+      stmt.run(clubName, item.event_date, item.event_name, item.requirement_name, item.quantity);
+    });
+
+    stmt.finalize(err => {
+      if (err) {
+        console.error('Error inserting wifi data:', err.message);
+        return res.status(500).json({ error: 'Insert failed' });
+      }
+      res.json({ message: 'Wi-Fi data submitted successfully.' });
+    });
+  });
+});
+
+app.get('/api/sponsors', (req, res) => {
+  const sponsorsDb = new sqlite3.Database(path.join(__dirname, 'sponsors.db'), err => {
+    if (err) console.error('Error opening sponsors DB:', err.message);
+    else console.log('Connected to sponsors.db');
+  });
+  const clubName = req.query.clubName;
+  if (!clubName) return res.status(400).json({ error: 'Club name is required.' });
+
+  sponsorsDb.all(`SELECT * FROM sponsors WHERE clubName = ?`, [clubName], (err, rows) => {
+    if (err) {
+      console.error('Error fetching sponsors:', err.message);
+      return res.status(500).json({ error: 'Database error' });
+    }
+    res.json(rows);
+  });
+});
+
+// POST sponsors submission
+app.post('/api/submit-sponsors', (req, res) => {
+  const sponsorsDb = new sqlite3.Database(path.join(__dirname, 'sponsors.db'), err => {
+    if (err) console.error('Error opening sponsors DB:', err.message);
+    else console.log('Connected to sponsors.db');
+  });
+  const { clubName, items } = req.body;
+  if (!clubName || !Array.isArray(items)) {
+    return res.status(400).json({ error: 'Invalid data.' });
+  }
+
+  sponsorsDb.run(`DELETE FROM sponsors WHERE clubName = ?`, [clubName], err => {
+    if (err) {
+      console.error('Error deleting sponsors:', err.message);
+      return res.status(500).json({ error: 'Delete failed' });
+    }
+
+    const insertQuery = `
+      INSERT INTO sponsors (clubName, event_date, event_name, sponsor_name, amount, status)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `;
+
+    const stmt = sponsorsDb.prepare(insertQuery);
+    items.forEach(item => {
+      stmt.run(clubName, item.event_date, item.event_name, item.sponsor_name, item.amount, item.status);
+    });
+
+    stmt.finalize(err => {
+      if (err) {
+        console.error('Error inserting sponsors:', err.message);
+        return res.status(500).json({ error: 'Insert failed' });
+      }
+      res.json({ message: 'Sponsors data submitted successfully.' });
+    });
+  });
+});
+
+app.get('/api/posters', (req, res) => {
+  const postersDb = new sqlite3.Database(path.join(__dirname, 'posters.db'), err => {
+    if (err) console.error('Error opening posters DB:', err.message);
+    else console.log('Connected to posters.db');
+  });
+  const clubName = req.query.clubName;
+  if (!clubName) return res.status(400).json({ error: 'Club name is required.' });
+
+  postersDb.all(`SELECT * FROM posters WHERE clubName = ?`, [clubName], (err, rows) => {
+    if (err) {
+      console.error('Error fetching posters:', err.message);
+      return res.status(500).json({ error: 'Database error' });
+    }
+    res.json(rows);
+  });
+});
+
+// POST submit posters
+app.post('/api/submit-posters', (req, res) => {
+  const postersDb = new sqlite3.Database(path.join(__dirname, 'posters.db'), err => {
+    if (err) console.error('Error opening posters DB:', err.message);
+    else console.log('Connected to posters.db');
+  });
+  const { clubName, items } = req.body;
+  if (!clubName || !Array.isArray(items)) {
+    return res.status(400).json({ error: 'Invalid data.' });
+  }
+
+  postersDb.run(`DELETE FROM posters WHERE clubName = ?`, [clubName], err => {
+    if (err) {
+      console.error('Error deleting posters:', err.message);
+      return res.status(500).json({ error: 'Delete failed' });
+    }
+
+    const insertQuery = `
+      INSERT INTO posters (clubName, event_date, event_name, drive_link)
+      VALUES (?, ?, ?, ?)
+    `;
+    const stmt = postersDb.prepare(insertQuery);
+    items.forEach(item => {
+      stmt.run(clubName, item.event_date, item.event_name, item.drive_link);
+    });
+
+    stmt.finalize(err => {
+      if (err) {
+        console.error('Error inserting posters:', err.message);
+        return res.status(500).json({ error: 'Insert failed' });
+      }
+      res.json({ message: 'Posters submitted successfully.' });
+    });
+  });
+});
+
+
+app.get('/api/purchases', (req, res) => {
+  const purchaseDb = new sqlite3.Database(path.join(__dirname, 'purchaselist.db'), err => {
+    if (err) console.error('Error opening purchase DB:', err.message);
+    else console.log('Connected to purchaselist.db');
+  });
+  const clubName = req.query.clubName;
+  if (!clubName) return res.status(400).json({ error: 'Club name is required.' });
+
+  purchaseDb.all(`SELECT * FROM purchaselist WHERE clubName = ?`, [clubName], (err, rows) => {
+    if (err) {
+      console.error('Error fetching purchases:', err.message);
+      return res.status(500).json({ error: 'Database error' });
+    }
+    res.json(rows);
+  });
+});
+
+// POST Submit Purchases
+app.post('/api/submit-purchases', (req, res) => {
+  const purchaseDb = new sqlite3.Database(path.join(__dirname, 'purchaselist.db'), err => {
+    if (err) console.error('Error opening purchase DB:', err.message);
+    else console.log('Connected to purchaselist.db');
+  });
+  const { clubName, items } = req.body;
+  if (!clubName || !Array.isArray(items)) {
+    return res.status(400).json({ error: 'Invalid data.' });
+  }
+
+  purchaseDb.run(`DELETE FROM purchaselist WHERE clubName = ?`, [clubName], err => {
+    if (err) {
+      console.error('Error deleting old purchases:', err.message);
+      return res.status(500).json({ error: 'Delete failed' });
+    }
+
+    const insertQuery = `
+      INSERT INTO purchaselist (clubName, event_date, event_name, item_name, quantity, price, source, amount, upload_time)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+    const stmt = purchaseDb.prepare(insertQuery);
+
+    items.forEach(item => {
+      stmt.run(
+        clubName,
+        item.event_date,
+        item.event_name,
+        item.item_name,
+        parseInt(item.quantity),
+        parseFloat(item.price),
+        item.source,
+        parseFloat(item.amount),
+        item.upload_time || new Date().toISOString()
+      );
+    });
+
+    stmt.finalize(err => {
+      if (err) {
+        console.error('Error inserting purchases:', err.message);
+        return res.status(500).json({ error: 'Insert failed' });
+      }
+      res.json({ message: 'Purchases submitted successfully.' });
+    });
+  });
+});
 app.listen(PORT, () => {
     console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
