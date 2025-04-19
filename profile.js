@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
     sessionStorage.getItem("clubName") || "Club Name";
     const clubName = sessionStorage.getItem("clubName");
     // Fetch and populate event data
-    fetch(`/api/events?clubName=${encodeURIComponent(clubName)}`)
+    fetch(`https://event-management-divk.onrender.com/api/events?clubName=${encodeURIComponent(clubName)}`)
       .then(res => res.json())
       .then(data => {
         const tbody = document.getElementById("eventBody");
@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
           });
         });
   
-        fetch('/api/submit-events', {
+        fetch('https://event-management-divk.onrender.com/api/submit-events', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -97,7 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const clubName = sessionStorage.getItem("clubName");
   
     // Fetch UDS data and populate the table
-    fetch(`/api/uds?clubName=${encodeURIComponent(clubName)}`)
+    fetch(`https://event-management-divk.onrender.com/api/uds?clubName=${encodeURIComponent(clubName)}`)
       .then(res => res.json())
       .then(data => {
         const tbody = document.getElementById("udsTable");
@@ -143,7 +143,7 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         });
   
-        fetch('/api/submit-uds', {
+        fetch('https://event-management-divk.onrender.com/api/submit-uds', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -168,7 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("clubName").innerText = clubName || "Club Name";
   
     // Fetch Housekeeping Table
-    fetch(`/api/housekeeping?clubName=${encodeURIComponent(clubName)}`)
+    fetch(`https://event-management-divk.onrender.com/api/housekeeping?clubName=${encodeURIComponent(clubName)}`)
       .then(res => res.json())
       .then(data => {
         const tbody = document.getElementById("housekeepingBody");
@@ -200,7 +200,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       });
   
-      fetch("/api/submit-housekeeping", {
+      fetch("https://event-management-divk.onrender.com/api/submit-housekeeping", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ clubName, items: housekeepingData })
@@ -226,7 +226,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("clubName").innerText = clubName || "Club Name";
   
     // Fetch Wi-Fi Table
-    fetch(`/api/wifi?clubName=${encodeURIComponent(clubName)}`)
+    fetch(`https://event-management-divk.onrender.com/api/wifi?clubName=${encodeURIComponent(clubName)}`)
       .then(res => res.json())
       .then(data => {
         const tbody = document.getElementById("wifiBody");
@@ -258,7 +258,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       });
   
-      fetch("/api/submit-wifi", {
+      fetch("https://event-management-divk.onrender.com/api/submit-wifi", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ clubName, items: wifiData })
@@ -285,7 +285,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("clubName").innerText = clubName || "Club Name";
   
     // Fetch Sponsors
-    fetch(`/api/sponsors?clubName=${encodeURIComponent(clubName)}`)
+    fetch(`https://event-management-divk.onrender.com/api/sponsors?clubName=${encodeURIComponent(clubName)}`)
       .then(res => res.json())
       .then(data => {
         const tbody = document.getElementById("sponsorsBody");
@@ -320,7 +320,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       });
   
-      fetch("/api/submit-sponsors", {
+      fetch("https://event-management-divk.onrender.com/api/submit-sponsors", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ clubName, items: sponsorData })
@@ -346,7 +346,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("clubName").innerText = clubName || "Club Name";
   
     // Fetch Posters
-    fetch(`/api/posters?clubName=${encodeURIComponent(clubName)}`)
+    fetch(`https://event-management-divk.onrender.com/api/posters?clubName=${encodeURIComponent(clubName)}`)
       .then(res => res.json())
       .then(data => {
         const tbody = document.getElementById("postersBody");
@@ -377,7 +377,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       });
   
-      fetch("/api/submit-posters", {
+      fetch("https://event-management-divk.onrender.com/api/submit-posters", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ clubName, items: posterData })
@@ -404,7 +404,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("clubName").innerText = clubName || "Club Name";
   
     // Fetch Purchase Data
-    fetch(`/api/purchases?clubName=${encodeURIComponent(clubName)}`)
+    fetch(`https://event-management-divk.onrender.com/api/purchases?clubName=${encodeURIComponent(clubName)}`)
       .then(res => res.json())
       .then(data => {
         const tbody = document.getElementById("purchaseBody");
@@ -445,7 +445,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       });
   
-      fetch("/api/submit-purchases", {
+      fetch("https://event-management-divk.onrender.com/api/submit-purchases", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ clubName, items: purchaseData })
