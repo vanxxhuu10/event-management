@@ -1,5 +1,5 @@
 dbs:
-  - path: /app/events.db
+  - path: ./events.db
     replicas:
       - type: s3
         bucket: Backup-databases
@@ -8,7 +8,7 @@ dbs:
         access-key-id: 005c6800d3cc8df0000000001
         secret-access-key: K005uO/n4PP+xmi/58DMcg72WnREwas
 
-  - path: /app/uds.db
+  - path: ./uds.db
     replicas:
       - type: s3
         bucket: Backup-databases
@@ -17,7 +17,7 @@ dbs:
         access-key-id: 005c6800d3cc8df0000000001
         secret-access-key: K005uO/n4PP+xmi/58DMcg72WnREwas
 
-  - path: /app/housekeeping.db
+  - path: ./housekeeping.db
     replicas:
       - type: s3
         bucket: Backup-databases
@@ -26,7 +26,7 @@ dbs:
         access-key-id: 005c6800d3cc8df0000000001
         secret-access-key: K005uO/n4PP+xmi/58DMcg72WnREwas
 
-  - path: /app/users.db
+  - path: ./users.db
     replicas:
       - type: s3
         bucket: Backup-databases
@@ -35,7 +35,7 @@ dbs:
         access-key-id: 005c6800d3cc8df0000000001
         secret-access-key: K005uO/n4PP+xmi/58DMcg72WnREwas
 
-  - path: /app/organizers.db
+  - path: ./organizers.db
     replicas:
       - type: s3
         bucket: Backup-databases
@@ -53,7 +53,7 @@ dbs:
         access-key-id: 005c6800d3cc8df0000000001
         secret-access-key: K005uO/n4PP+xmi/58DMcg72WnREwas
 
-  - path: /app/Final_Events.db
+  - path: ./Final_Events.db
     replicas:
       - type: s3
         bucket: Backup-databases
@@ -71,7 +71,7 @@ dbs:
         access-key-id: 005c6800d3cc8df0000000001
         secret-access-key: K005uO/n4PP+xmi/58DMcg72WnREwas
 
-  - path: /app/sponsors.db
+  - path: ./sponsors.db
     replicas:
       - type: s3
         bucket: Backup-databases
@@ -89,7 +89,7 @@ dbs:
         access-key-id: 005c6800d3cc8df0000000001
         secret-access-key: K005uO/n4PP+xmi/58DMcg72WnREwas
 
-  - path: /app/wifi.db
+  - path: ./wifi.db
     replicas:
       - type: s3
         bucket: Backup-databases
