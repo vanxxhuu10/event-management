@@ -1484,7 +1484,7 @@ app.post("/update-final-events", (req, res) => {
 
 // GET: Retrieve all users
 app.get("/get-users", (req, res) => {
-  const dbPath = path.join(__dirname, "database", "users.db");
+  const dbPath = path.join(__dirname, "users.db");
   const db = new sqlite3.Database(dbPath);
 
   db.all("SELECT * FROM users", (err, rows) => {
@@ -1508,7 +1508,7 @@ app.post("/update-users", (req, res) => {
     return res.status(400).json({ error: "Invalid users format" });
   }
 
-  const dbPath = path.join(__dirname, "database", "users.db");
+  const dbPath = path.join(__dirname, "users.db");
   const db = new sqlite3.Database(dbPath);
 
   db.serialize(() => {
