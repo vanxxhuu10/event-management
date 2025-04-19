@@ -1,1 +1,100 @@
+dbs:
+  - path: /app/events.db
+    replicas:
+      - type: s3
+        bucket: Backup-databases
+        path: backups/events
+        endpoint: https://s3.us-east-005.backblazeb2.com
+        access-key-id: 005c6800d3cc8df0000000001
+        secret-access-key: K005uO/n4PP+xmi/58DMcg72WnREwas
+
+  - path: /app/uds.db
+    replicas:
+      - type: s3
+        bucket: Backup-databases
+        path: backups/uds
+        endpoint: https://s3.us-east-005.backblazeb2.com
+        access-key-id: 005c6800d3cc8df0000000001
+        secret-access-key: K005uO/n4PP+xmi/58DMcg72WnREwas
+
+  - path: /app/housekeeping.db
+    replicas:
+      - type: s3
+        bucket: Backup-databases
+        path: backups/housekeeping
+        endpoint: https://s3.us-east-005.backblazeb2.com
+        access-key-id: 005c6800d3cc8df0000000001
+        secret-access-key: K005uO/n4PP+xmi/58DMcg72WnREwas
+
+  - path: /app/users.db
+    replicas:
+      - type: s3
+        bucket: Backup-databases
+        path: backups/users
+        endpoint: https://s3.us-east-005.backblazeb2.com
+        access-key-id: 005c6800d3cc8df0000000001
+        secret-access-key: K005uO/n4PP+xmi/58DMcg72WnREwas
+
+  - path: /app/organizers.db
+    replicas:
+      - type: s3
+        bucket: Backup-databases
+        path: backups/organizers
+        endpoint: https://s3.us-east-005.backblazeb2.com
+        access-key-id: 005c6800d3cc8df0000000001
+        secret-access-key: K005uO/n4PP+xmi/58DMcg72WnREwas
+
+  - path: /app/Venues.db
+    replicas:
+      - type: s3
+        bucket: Backup-databases
+        path: backups/venues
+        endpoint: https://s3.us-east-005.backblazeb2.com
+        access-key-id: 005c6800d3cc8df0000000001
+        secret-access-key: K005uO/n4PP+xmi/58DMcg72WnREwas
+
+  - path: /app/Final_Events.db
+    replicas:
+      - type: s3
+        bucket: Backup-databases
+        path: backups/final_events
+        endpoint: https://s3.us-east-005.backblazeb2.com
+        access-key-id: 005c6800d3cc8df0000000001
+        secret-access-key: K005uO/n4PP+xmi/58DMcg72WnREwas
+
+  - path: /app/posters.db
+    replicas:
+      - type: s3
+        bucket: Backup-databases
+        path: backups/posters
+        endpoint: https://s3.us-east-005.backblazeb2.com
+        access-key-id: 005c6800d3cc8df0000000001
+        secret-access-key: K005uO/n4PP+xmi/58DMcg72WnREwas
+
+  - path: /app/sponsors.db
+    replicas:
+      - type: s3
+        bucket: Backup-databases
+        path: backups/sponsors
+        endpoint: https://s3.us-east-005.backblazeb2.com
+        access-key-id: 005c6800d3cc8df0000000001
+        secret-access-key: K005uO/n4PP+xmi/58DMcg72WnREwas
+
+  - path: /app/purchaselist.db
+    replicas:
+      - type: s3
+        bucket: Backup-databases
+        path: backups/purchaselist
+        endpoint: https://s3.us-east-005.backblazeb2.com
+        access-key-id: 005c6800d3cc8df0000000001
+        secret-access-key: K005uO/n4PP+xmi/58DMcg72WnREwas
+
+  - path: /app/wifi.db
+    replicas:
+      - type: s3
+        bucket: Backup-databases
+        path: backups/wifi
+        endpoint: https://s3.us-east-005.backblazeb2.com
+        access-key-id: 005c6800d3cc8df0000000001
+        secret-access-key: K005uO/n4PP+xmi/58DMcg72WnREwas
 
