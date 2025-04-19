@@ -1845,106 +1845,68 @@ document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("usersBtn").addEventListener("click", () => {
     let currentData = [];
 
-    async function loadUsersTable() {
-      try {
-        showLoading(true);
-        const response = await fetch("https://event-management-divk.onrender.com/get-users", {
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          credentials: 'include' // Include cookies if needed
+    function loadUsersTable() {
+      fetch("https://event-management-divk.onrender.com/get-users")
+        .then(response => response.json())
+        .then(data => {
+          currentData = data;
+          document.getElementById("tableTitle").innerText = "Users Table";
+          renderEditableUsersTable(data);
         });
-
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          throw new Error(
-            errorData.message || `Server error: ${response.status} ${response.statusText}`
-          );
-        }
-
-        const data = await response.json();
-        currentData = Array.isArray(data) ? data : [];
-        document.getElementById("tableTitle").innerText = "Users Table";
-        renderEditableUsersTable(currentData);
-      } catch (err) {
-        console.error("Error fetching users:", err);
-        showError(`Failed to load users: ${err.message}`);
-        renderEditableUsersTable([]);
-      } finally {
-        showLoading(false);
-      }
     }
 
     function renderEditableUsersTable(data) {
       const container = document.getElementById("venueTableContainer");
       container.innerHTML = "";
 
-      if (!Array.isArray(data)) {
-        data = [];
-      }
-
       const table = document.createElement("table");
-      table.className = "editable-table";
       table.border = "1";
       table.style.width = "100%";
 
-      // Default headers
-      const headers = ["id", "club_name", "club_email", "password"];
+      const headers = data.length > 0 ? Object.keys(data[0]) : ["id", "club_name", "club_email", "password"];
 
-      // Create table header
       const thead = table.createTHead();
       const headerRow = thead.insertRow();
-      
+
       headers.forEach(header => {
         const th = document.createElement("th");
-        th.innerText = header.replace('_', ' ');
+        th.innerText = header;
         headerRow.appendChild(th);
       });
 
-      // Add actions header
       const actionTh = document.createElement("th");
       actionTh.innerText = "Actions";
       headerRow.appendChild(actionTh);
 
-      // Create table body
       const tbody = table.createTBody();
 
       if (data.length === 0) {
         const tr = tbody.insertRow();
-        const cell = tr.insertCell();
-        cell.colSpan = headers.length + 1;
-        cell.innerText = "No users found";
-        cell.style.textAlign = "center";
+        headers.forEach(() => {
+          const cell = tr.insertCell();
+          cell.innerText = "No data available";
+        });
       } else {
         data.forEach((row, index) => {
           const tr = tbody.insertRow();
-          
-          headers.forEach(header => {
+          headers.forEach(key => {
             const cell = tr.insertCell();
-            
-            if (header === "id") {
-              // Display ID as non-editable
-              cell.innerText = row[header] || "Auto";
-              cell.className = "non-editable-cell";
+            if (key === "id") {
+              cell.innerText = row[key];
             } else {
-              // Create editable input for other fields
               const input = document.createElement("input");
-              input.type = header === "password" ? "password" : "text";
-              input.value = row[header] || "";
-              input.dataset.key = header;
+              input.type = key === "password" ? "password" : "text";
+              input.value = row[key];
+              input.dataset.key = key;
               input.dataset.index = index;
-              input.className = "editable-input";
               input.onchange = updateUserValue;
               cell.appendChild(input);
             }
           });
 
-          // Add delete button
           const actionCell = tr.insertCell();
           const deleteBtn = document.createElement("button");
           deleteBtn.innerText = "Delete";
-          deleteBtn.className = "delete-btn";
           deleteBtn.onclick = () => deleteUserRow(index);
           actionCell.appendChild(deleteBtn);
         });
@@ -1952,29 +1914,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
       container.appendChild(table);
 
-      // Add action buttons
-      const buttonContainer = document.createElement("div");
-      buttonContainer.className = "table-actions";
-
       const addBtn = document.createElement("button");
-      addBtn.innerText = "Add New User";
-      addBtn.className = "action-btn primary";
+      addBtn.innerText = "Add Row";
       addBtn.onclick = addUserRow;
-      buttonContainer.appendChild(addBtn);
+      addBtn.style.marginTop = "20px";
+      container.appendChild(addBtn);
 
       const submitBtn = document.createElement("button");
-      submitBtn.innerText = "Save Changes";
-      submitBtn.className = "action-btn success";
+      submitBtn.innerText = "Submit";
+      submitBtn.style.marginTop = "20px";
       submitBtn.onclick = submitUserData;
-      buttonContainer.appendChild(submitBtn);
-
-      const refreshBtn = document.createElement("button");
-      refreshBtn.innerText = "Refresh";
-      refreshBtn.className = "action-btn";
-      refreshBtn.onclick = loadUsersTable;
-      buttonContainer.appendChild(refreshBtn);
-
-      container.appendChild(buttonContainer);
+      container.appendChild(submitBtn);
     }
 
     function updateUserValue(e) {
@@ -1984,10 +1934,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function deleteUserRow(index) {
-      if (confirm("Are you sure you want to delete this user?")) {
-        currentData.splice(index, 1);
-        renderEditableUsersTable(currentData);
-      }
+      currentData.splice(index, 1);
+      renderEditableUsersTable(currentData);
     }
 
     function addUserRow() {
@@ -2000,75 +1948,21 @@ document.addEventListener("DOMContentLoaded", function () {
       renderEditableUsersTable(currentData);
     }
 
-    async function submitUserData() {
-      try {
-        showLoading(true);
-        
-        // Prepare data - exclude empty IDs for new records
-        const dataToSubmit = currentData.map(row => {
-          const { id, ...rest } = row;
-          return id ? row : rest;
+    function submitUserData() {
+      fetch("https://event-management-divk.onrender.com/update-users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ users: currentData })
+      })
+        .then(res => res.json())
+        .then(result => {
+          alert(result.message || "Users data updated!");
+          loadUsersTable();
         });
-
-        const response = await fetch("https://event-management-divk.onrender.com/update-users", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-          },
-          credentials: 'include',
-          body: JSON.stringify({ users: dataToSubmit })
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          throw new Error(
-            errorData.message || `Server error: ${response.status} ${response.statusText}`
-          );
-        }
-
-        const result = await response.json();
-        showSuccess(result.message || "Users updated successfully!");
-        loadUsersTable();
-      } catch (err) {
-        console.error("Error updating users:", err);
-        showError(`Failed to update users: ${err.message}`);
-      } finally {
-        showLoading(false);
-      }
     }
 
-    // Helper functions for UI feedback
-    function showLoading(show) {
-      const loader = document.getElementById("loadingIndicator") || createLoader();
-      loader.style.display = show ? "block" : "none";
-    }
-
-    function createLoader() {
-      const loader = document.createElement("div");
-      loader.id = "loadingIndicator";
-      loader.style.display = "none";
-      loader.style.position = "fixed";
-      loader.style.top = "20px";
-      loader.style.right = "20px";
-      loader.style.padding = "10px";
-      loader.style.background = "rgba(0,0,0,0.7)";
-      loader.style.color = "white";
-      loader.style.borderRadius = "5px";
-      loader.innerText = "Loading...";
-      document.body.appendChild(loader);
-      return loader;
-    }
-
-    function showError(message) {
-      alert("Error: " + message); // Replace with better UI notification
-    }
-
-    function showSuccess(message) {
-      alert("Success: " + message); // Replace with better UI notification
-    }
-
-    // Initialize
     loadUsersTable();
   });
 });
