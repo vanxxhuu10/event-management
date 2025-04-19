@@ -1796,7 +1796,7 @@ app.post("/update-venues-pending", (req, res) => {
 });
 
 app.get('/api/events', (req, res) => {
-  const db = new sqlite3.Database('./Events.db');
+  const db = new sqlite3.Database('./events.db');
   const clubName = req.query.clubName;
   db.all(`SELECT * FROM events WHERE clubName = ?`, [clubName], (err, rows) => {
     if (err) return res.status(500).json({ error: "DB error" });
@@ -1805,7 +1805,7 @@ app.get('/api/events', (req, res) => {
 });
 
 app.post('/api/submit-events', (req, res) => {
-  const db = new sqlite3.Database('./Events.db');
+  const db = new sqlite3.Database('./events.db');
   const { clubName, events } = req.body;
   db.serialize(() => {
     db.run(`DELETE FROM events WHERE clubName = ?`, [clubName], err => {
