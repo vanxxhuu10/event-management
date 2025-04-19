@@ -1846,14 +1846,32 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentData = [];
 
     function loadUsersTable() {
-      fetch("https://event-management-divk.onrender.com/get-users")
-        .then(response => response.json())
-        .then(data => {
-          currentData = data;
-          document.getElementById("tableTitle").innerText = "Users Table";
-          renderEditableUsersTable(data);
-        });
-    }
+  fetch("https://event-management-divk.onrender.com/get-users")
+    .then(async response => {
+      const contentType = response.headers.get("content-type");
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Server Error: ${response.status} - ${errorText}`);
+      }
+
+      if (contentType && contentType.includes("application/json")) {
+        return response.json();
+      } else {
+        throw new Error("Response is not JSON");
+      }
+    })
+    .then(data => {
+      currentData = data;
+      document.getElementById("tableTitle").innerText = "Users Table";
+      renderEditableUsersTable(data);
+    })
+    .catch(error => {
+      console.error("Error loading users:", error.message);
+      alert("Failed to load users. Check console for more details.");
+    });
+}
+
 
     function renderEditableUsersTable(data) {
       const container = document.getElementById("venueTableContainer");
