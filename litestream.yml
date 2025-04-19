@@ -1,5 +1,5 @@
 dbs:
-  - path: ./events.db
+  - path: /app/events.db
     replicas:
       - type: s3
         bucket: Backup-databases
@@ -8,7 +8,7 @@ dbs:
         access-key-id: 005c6800d3cc8df0000000001
         secret-access-key: K005uO/n4PP+xmi/58DMcg72WnREwas
 
-  - path: ./uds.db
+  - path: /app/uds.db
     replicas:
       - type: s3
         bucket: Backup-databases
@@ -17,7 +17,7 @@ dbs:
         access-key-id: 005c6800d3cc8df0000000001
         secret-access-key: K005uO/n4PP+xmi/58DMcg72WnREwas
 
-  - path: ./housekeeping.db
+  - path: /app/housekeeping.db
     replicas:
       - type: s3
         bucket: Backup-databases
@@ -26,7 +26,7 @@ dbs:
         access-key-id: 005c6800d3cc8df0000000001
         secret-access-key: K005uO/n4PP+xmi/58DMcg72WnREwas
 
-  - path: ./users.db
+  - path: /app/users.db
     replicas:
       - type: s3
         bucket: Backup-databases
@@ -35,7 +35,7 @@ dbs:
         access-key-id: 005c6800d3cc8df0000000001
         secret-access-key: K005uO/n4PP+xmi/58DMcg72WnREwas
 
-  - path: ./organizers.db
+  - path: /app/organizers.db
     replicas:
       - type: s3
         bucket: Backup-databases
@@ -53,7 +53,7 @@ dbs:
         access-key-id: 005c6800d3cc8df0000000001
         secret-access-key: K005uO/n4PP+xmi/58DMcg72WnREwas
 
-  - path: ./Final_Events.db
+  - path: /app/Final_Events.db
     replicas:
       - type: s3
         bucket: Backup-databases
@@ -71,7 +71,7 @@ dbs:
         access-key-id: 005c6800d3cc8df0000000001
         secret-access-key: K005uO/n4PP+xmi/58DMcg72WnREwas
 
-  - path: ./sponsors.db
+  - path: /app/sponsors.db
     replicas:
       - type: s3
         bucket: Backup-databases
@@ -89,7 +89,7 @@ dbs:
         access-key-id: 005c6800d3cc8df0000000001
         secret-access-key: K005uO/n4PP+xmi/58DMcg72WnREwas
 
-  - path: ./wifi.db
+  - path: /app/wifi.db
     replicas:
       - type: s3
         bucket: Backup-databases
@@ -97,4 +97,3 @@ dbs:
         endpoint: https://s3.us-east-005.backblazeb2.com
         access-key-id: 005c6800d3cc8df0000000001
         secret-access-key: K005uO/n4PP+xmi/58DMcg72WnREwas
-
