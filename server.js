@@ -1484,24 +1484,36 @@ app.post("/update-final-events", (req, res) => {
 
 // GET: Retrieve all users
 app.get("/get-users", (req, res) => {
-  const db = new sqlite3.Database(path.join(__dirname, "database", "users.db"));
-  
+  const dbPath = path.join(__dirname, "database", "users.db");
+  const db = new sqlite3.Database(dbPath);
+
   db.all("SELECT * FROM users", (err, rows) => {
     db.close();
+
+    res.setHeader('Content-Type', 'application/json');
+
     if (err) {
       return res.status(500).json({ error: err.message });
     }
-    res.json(rows || []);
+
+    res.status(200).json(rows || []);
   });
 });
 
-// Update users
+// Route to update users
 app.post("/update-users", (req, res) => {
   const { users } = req.body;
-  const db = new sqlite3.Database(path.join(__dirname, "database", "users.db"));
+
+  if (!Array.isArray(users)) {
+    return res.status(400).json({ error: "Invalid users format" });
+  }
+
+  const dbPath = path.join(__dirname, "database", "users.db");
+  const db = new sqlite3.Database(dbPath);
 
   db.serialize(() => {
     db.run("BEGIN TRANSACTION");
+
     db.run("DELETE FROM users", (err) => {
       if (err) {
         db.run("ROLLBACK");
@@ -1510,7 +1522,7 @@ app.post("/update-users", (req, res) => {
       }
 
       const stmt = db.prepare("INSERT INTO users (club_name, club_email, password) VALUES (?, ?, ?)");
-      
+
       users.forEach(user => {
         stmt.run([user.club_name, user.club_email, user.password]);
       });
@@ -1524,10 +1536,13 @@ app.post("/update-users", (req, res) => {
 
         db.run("COMMIT", (err) => {
           db.close();
+
           if (err) {
             return res.status(500).json({ error: err.message });
           }
-          res.json({ message: "Users updated successfully" });
+
+          res.setHeader('Content-Type', 'application/json');
+          res.status(200).json({ message: "Users updated successfully" });
         });
       });
     });
