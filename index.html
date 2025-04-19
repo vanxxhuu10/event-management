@@ -3,133 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VIT Chennai Login</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>Event Managers Club</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="index.css">
 </head>
 <body>
-    <div class="logo-container">
-        <img src="emc_logo.jpg" alt="Logo 1">
-    </div>
-    <div class="login-container">
-        <h2>VIT Chennai Events</h2>
-        <form>
-            <div class="identity-heading" style="text-align: center;">Identity</div>
-            <div class="identity-container">
-                <div class="identity-box" id="organizerBox" style="color: #333;">
-                    <strong>Organizer</strong>
-                    <div class="identity-content" id="organizerContent" style="text-align: center;">
-                        You are an event organizer.
-                    </div>
-                </div>
-                <div class="identity-box" id="clubBox" style="color: #333;">
-                    <strong>Club</strong>
-                    <div class="identity-content" id="clubContent" style="text-align: center;">
-                        You are part of a club.
-                    </div>
-                </div>
-            </div>
-
-        <div class="event-type-heading" style="text-align: center;">Event Type</div>
-        <div class="event-type-container" style="display: flex; justify-content: center; gap: 20px;">
-        <div class="event-type-box" id="vibranceBox" style="text-align: center;">            
-        <strong>VIBRANCE</strong>
+    <header>
+        <div class="quote-box">
+            <i class="fas fa-quote-left"></i>
+            <span class="quote-text">“Great events aren’t just planned, they’re envisioned.”</span>
         </div>
-        <div class="event-type-box" id="technoVitBox" style="text-align: center;">
-        <strong>Techno-VIT</strong>
-        </div>
-        </div>
-
-        <button type="button">Next</button>
+        <!-- "Let's Go" Button -->
+        <button class="cta-button" onclick="window.location.href='identity.html'">
+            Let's Go <i class="fas fa-arrow-right"></i>
+        </button>
         
-        </form>
+        <!-- Animated Main Heading -->
+        <h1 class="main-heading">EVENT MANAGERS CLUB</h1>
+        
+        <!-- Introduction Text -->
+        <p class="intro-text">
+            Hey everyone! We're here to transform your event ideas into unforgettable experiences. 
+            Our team ensures flawless execution from planning to completion, making your vision 
+            a reality with precision and creativity.
+        </p>
+    </header>
+    
+    <!-- Image Slider -->
+    <div class="slider-container">
+        <div class="slider">
+            <div class="slide" style="background-image: url('pic1.jpg');"></div>
+            <div class="slide" style="background-image: url('pic2.jpg');"></div>
+            <div class="slide" style="background-image: url('pic3.jpg');"></div>
+            <div class="slide" style="background-image: url('pic4.jpg');"></div>
+            <div class="slide" style="background-image: url('pic1.jpg');"></div>
+            <div class="slide" style="background-image: url('pic2.jpg');"></div>
+            <div class="slide" style="background-image: url('pic3.jpg');"></div>
+            <div class="slide" style="background-image: url('pic4.jpg');"></div>
+            <div class="slide" style="background-image: url('pic1.jpg');"></div>
+            <div class="slide" style="background-image: url('pic2.jpg');"></div>
+            <div class="slide" style="background-image: url('pic3.jpg');"></div>
+            <div class="slide" style="background-image: url('pic4.jpg');"></div>
+            <!-- Duplicate for infinite effect -->
+            <div class="slide" style="background-image: url('pic1.jpg');"></div>
+            <div class="slide" style="background-image: url('pic2.jpg');"></div>
+            <div class="slide" style="background-image: url('pic3.jpg');"></div>
+            <div class="slide" style="background-image: url('pic4.jpg');"></div>
+          </div>
+          
     </div>
-    <!-- Add inside your <body>, preferably at the end -->
-
-<!-- Blur Overlay -->
-<div id="overlay" style="display: none; position: fixed; top: 0; left: 0; height: 100%; width: 100%; backdrop-filter: blur(5px); z-index: 99;"></div>
-
-<!-- Organizer Login Popup -->
-<div id="organizerLogin" style="
-display: none;
-position: fixed;
-top: 50%;
-left: 50%;
-transform: translate(-50%, -50%);
-background: #fff;
-padding: 40px 30px;
-border-radius: 12px;
-box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
-z-index: 100;
-width: 350px;
-font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-opacity: 0;
-animation: fadeIn 0.6s ease-out forwards;
-">
-<h3 style="
-  margin-bottom: 25px;
-  text-align: center;
-  color: #333;
-  font-size: 24px;
-  font-weight: bold;
-  animation: slideIn 0.6s ease-out;
-">Organizer Login</h3>
-
-<label for="identity" style="display: block; margin-bottom: 8px; font-weight: bold; color: #444;">Identity:</label>
-<input type="text" id="identity" placeholder="Enter identity" style="
-  width: 100%;
-  padding: 12px;
-  font-size: 16px;
-  border: 2px solid #ccc;
-  border-radius: 8px;
-  outline: none;
-  margin-bottom: 20px;
-  transition: all 0.3s ease-in-out;
-  box-sizing: border-box;
-" onfocus="this.style.borderColor='#4a90e2'; this.style.boxShadow='0 0 5px #4a90e2'" onblur="this.style.borderColor='#ccc'; this.style.boxShadow='none'"><br>
-
-<label for="orgId" style="display: block; margin-bottom: 8px; font-weight: bold; color: #444;">ID:</label>
-<input type="text" id="orgId" placeholder="Enter ID" style="
-  width: 100%;
-  padding: 12px;
-  font-size: 16px;
-  border: 2px solid #ccc;
-  border-radius: 8px;
-  outline: none;
-  margin-bottom: 20px;
-  transition: all 0.3s ease-in-out;
-  box-sizing: border-box;
-" onfocus="this.style.borderColor='#4a90e2'; this.style.boxShadow='0 0 5px #4a90e2'" onblur="this.style.borderColor='#ccc'; this.style.boxShadow='none'"><br>
-
-<label for="orgPassword" style="display: block; margin-bottom: 8px; font-weight: bold; color: #444;">Password:</label>
-<input type="password" id="orgPassword" placeholder="Enter Password" style="
-  width: 100%;
-  padding: 12px;
-  font-size: 16px;
-  border: 2px solid #ccc;
-  border-radius: 8px;
-  outline: none;
-  margin-bottom: 30px;
-  transition: all 0.3s ease-in-out;
-  box-sizing: border-box;
-" onfocus="this.style.borderColor='#4a90e2'; this.style.boxShadow='0 0 5px #4a90e2'" onblur="this.style.borderColor='#ccc'; this.style.boxShadow='none'"><br>
-
-<button onclick="verifyOrganizer()" style="
-  width: 100%;
-  padding: 14px;
-  background: #4a90e2;
-  border: none;
-  border-radius: 8px;
-  font-size: 18px;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-sizing: border-box;
-" onmouseover="this.style.background='#357ab8'" onmouseout="this.style.background='#4a90e2'" onfocus="this.style.transform='scale(1.05)'" onblur="this.style.transform='scale(1)'">
-  Submit
-</button>
-</div>
-    <script src="index.js"></script>
+    
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Vansh Srivastava. All rights reserved.</p>
+    </footer>
 </body>
 </html>
